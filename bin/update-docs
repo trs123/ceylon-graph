@@ -1,0 +1,6 @@
+#!/bin/sh
+
+RECREATE_DOCS="ceylon doc graph --source-code"
+RSYNC="rsync -a --delete modules/graph/1.0.0/module-doc ../ceylon-graph-gh-pages/"
+
+$RECREATE_DOCS && $RSYNC
