@@ -11,12 +11,14 @@
  - [[degreeOf]] is required to be at most linear in the number of neighbors
  - [[containsEdge]] is required to be at most linear in the number of neighbors
 
- ## Infinite graphs
+ ## Infinite Graphs
 
  The number of vertices may be infinite in which case the user has to take care not to call methods which
  will not return (this is similar to an [[ceylon.language::Iterable]] which may contain an infinite number of elements).
 
  The same applies for the number of neighbors of a vertex.
+
+ ## Design Notes
 
  Think about making Vertex (and, in subclasses, Edge) member classes! cf. Graph example [here](http://in.relation.to/Bloggers/SelfTypesAndTypeFamiliesInCeylon)"
 by ("ThorstenSeitz")
