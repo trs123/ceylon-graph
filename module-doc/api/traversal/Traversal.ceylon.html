@@ -1,0 +1,18 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>Traversal.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>shared interface GraphIterator&lt;V&gt; satisfies Iterator&lt;V&gt; {
+
+}
+
+shared class Traversal&lt;V&gt;(shared GraphIterator&lt;V&gt; it) satisfies Iterable&lt;V&gt; {
+
+	shared actual GraphIterator&lt;V&gt; iterator() =&gt; it;
+}
+
+&quot;Work in progress!!&quot;
+shared Traversal&lt;V&gt; edgeTraversal&lt;V&gt;(GraphIterator&lt;V&gt; iterator) {
+	return Traversal(iterator);
+}
+</pre></body></html>

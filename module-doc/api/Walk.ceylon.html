@@ -1,0 +1,54 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>Walk.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>&quot;A Walk is a possibly empty sequence of edges connecting two vertices.&quot;
+by(&quot;ThorstenSeitz&quot;)
+shared interface Walk&lt;V,E&gt; satisfies Comparable&lt;Walk&lt;V,E&gt;&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V, E&gt; {
+
+	&quot;The edges comprising the walk.&quot;
+	shared formal {E*} edges;
+
+	&quot;The vertices touched by the walk.&quot;
+	shared {V*} vertices {
+		if (exists startpoint = edges.first?.source) {
+			return edges.map(Edge&lt;V, E&gt;.target).follow(startpoint);
+		} else {
+			return {};
+		}
+	}
+
+	&quot;The vertex where the walk starts or none if the walk is empty.&quot;
+	shared default V? startpoint =&gt; edges.first?.source;
+
+	&quot;The vertex where the walk end or none if the walk is empty.&quot;
+	shared default V? endpoint =&gt; edges.last?.target;
+
+	&quot;The length of the walk, i.e. the number of edges.&quot;
+	shared Integer length {
+		return edges.size;
+	}
+
+	&quot;The distance of a walk with recpect to the given [[Weights]].&quot;
+	shared Weight distance&lt;Weight&gt;(Weights&lt;Weight, E&gt; weights) given Weight satisfies Summable&lt;Weight&gt; {
+		return edges.map(weights.weight).fold(weights.zero)(plus&lt;Weight&gt;);
+	}
+
+	&quot;Answer whether the walk is empty.&quot;
+	shared Boolean empty {
+		return edges.empty;
+	}
+
+	&quot;Answer whether the walk is not empty.&quot;
+	shared Boolean notEmpty {
+		return !empty;
+	}
+
+	&quot;Compare walks by length.&quot;
+	shared actual default Comparison compare(Walk&lt;V,E&gt; other) {
+		return length.compare(other.length);
+	}
+}
+</pre></body></html>
