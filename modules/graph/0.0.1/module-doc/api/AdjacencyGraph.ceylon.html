@@ -1,0 +1,73 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>AdjacencyGraph.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>&quot;## Concept
+
+ An [[AdjacencyGraph]] is a graph which is concerned only with the vertices and not with the edges. There are
+ no explicit edge objects, adjacent vertices are simply accessed as [[neighbors]].
+ For many use cases this is sufficient.
+
+ ## Complexity
+
+ - [[vertices]] is required to be constant time; iterating over the iterable is required to be linear in the number of vertices
+ - [[neighbors]] is required to be constant time; iterating over the iterable is required to be linear in the number of neighbors
+ - [[degreeOf]] is required to be at most linear in the number of neighbors
+ - [[containsEdge]] is required to be at most linear in the number of neighbors
+
+ ## Infinite Graphs
+
+ The number of vertices may be infinite in which case the user has to take care not to call methods which
+ will not return (this is similar to an [[ceylon.language::Iterable]] which may contain an infinite number of elements).
+
+ The same applies for the number of neighbors of a vertex.
+
+ ## Design Notes
+
+ Think about making Vertex (and, in subclasses, Edge) member classes! cf. Graph example [here](http://in.relation.to/Bloggers/SelfTypesAndTypeFamiliesInCeylon)&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared interface AdjacencyGraph&lt;V&gt;
+		given V satisfies Object {
+
+	&quot;All vertices of the graph.&quot;
+	shared formal {V*} vertices;
+
+	&quot;All neighbor vertices of the given vertex. A neighbor is the target of an outgoing directed edge
+	 or the other endpoint of an undirected edge.&quot;
+	shared formal {V*} neighbors(V vertex);
+
+	&quot;Apply action for each neighbor of the given vertex.
+	 This method will (obviously) not return if the vertex has an inifinite number of neighbors.&quot;
+	shared void forEachNeighbor(V vertex, void action(V neighbor)) {
+		for (V neighbor in neighbors(vertex)) {
+			action(neighbor);
+		}
+	}
+
+	&quot;Answer the degree of the given vertex, i.e. the number of neighbors.
+	 This method will (obviously) not return if the vertex has inifinite neighbors.&quot;
+	shared Integer degreeOf(V vertex) {
+		return neighbors(vertex).size;
+	}
+
+	&quot;Answer whether the given vertex has at least one neighbor.&quot;
+	shared default Boolean hasNeighbors(V vertex) {
+		return !neighbors(vertex).empty;
+	}
+
+	&quot;Answer whether the graph contains an edge from source to target.&quot;
+	shared default Boolean containsEdge(V source, V target) {
+		return neighbors(source).any((V neighbor) =&gt; neighbor == target);
+	}
+
+	&quot;Answer whether the graph is empty, i.e. contains no vertices.&quot;
+	shared Boolean empty {
+		return vertices.empty;
+	}
+
+	&quot;Answer whether the graph is not empty, i.e. contains at least one vertex.&quot;
+	shared Boolean notEmpty {
+		return !empty;
+	}
+}
+</pre></body></html>

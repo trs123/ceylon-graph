@@ -1,0 +1,35 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>Edge.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>&quot;A generic edge between two vertices of type Vertex.&quot;
+by(&quot;ThorstenSeitz&quot;)
+shared interface Edge&lt;out Vertex, E&gt; of E
+		given Vertex satisfies Object {
+
+	&quot;The source vertex of the edge.&quot;
+	shared formal Vertex source;
+
+	&quot;The target vertex of the edge.&quot;
+	shared formal Vertex target;
+
+	&quot;Whether the edge is directed.&quot;
+	shared formal Boolean isDirected;
+
+	&quot;Answer whether the edge is a loop, i.e. source == target.&quot;
+	shared Boolean isLoop { return source == target; }
+
+	&quot;Answer whether the edge is a link between two different vertices.&quot;
+	shared Boolean isLink { return !isLoop; }
+
+	&quot;Given one endpoint of the edge answer its other endpoint.&quot;
+	shared Vertex otherEnd(Object endpoint) {
+		assert (endpoint == source || endpoint == target);
+		return endpoint == source then target else source;
+	}
+
+	shared formal E reversed;
+
+	shared formal Boolean isIncident(Object vertex);
+}
+</pre></body></html>

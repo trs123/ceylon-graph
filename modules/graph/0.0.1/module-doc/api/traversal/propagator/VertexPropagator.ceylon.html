@@ -1,0 +1,38 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>VertexPropagator.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	AdjacencyGraph
+}
+import graph.traversal.visitor {
+	VertexVisitor
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared class VertexPropagator&lt;V,G&gt;(G graph, VertexVisitor&lt;V&gt; visitor, V source) extends Propagator&lt;V,V&gt;(visitor, source)
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt; {
+
+	shared actual {V*} adjacencies =&gt; graph.neighbors(source);
+
+	shared actual V target(V vertex) =&gt; vertex;
+
+	shared actual void backEdge(V target) =&gt; visitor.backEdge(source, target);
+
+	shared actual void examineEdge(V target) =&gt; visitor.examineEdge(source, target);
+
+	shared actual void forwardEdge(V target) =&gt; visitor.forwardEdge(source, target);
+
+	shared actual void nonTreeEdge(V target) =&gt; visitor.nonTreeEdge(source, target);
+
+	shared actual void treeEdge(V target) =&gt; visitor.treeEdge(source, target);
+}
+
+shared class VertexPropagatorFactory&lt;V,G&gt;(G graph, VertexVisitor&lt;V&gt; visitor) extends PropagatorFactory&lt;V,V,VertexPropagator&lt;V,G&gt;&gt;(visitor)
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt; {
+
+	shared actual VertexPropagator&lt;V,G&gt; propagator(V source) =&gt; VertexPropagator(graph, visitor, source);
+}
+</pre></body></html>

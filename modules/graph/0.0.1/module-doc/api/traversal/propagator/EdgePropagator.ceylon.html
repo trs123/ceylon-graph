@@ -1,0 +1,41 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>EdgePropagator.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	Edge,
+	IncidenceGraph
+}
+import graph.traversal.visitor {
+	EdgeVisitor
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared class EdgePropagator&lt;V,E,G&gt;(G graph, EdgeVisitor&lt;V,E&gt; visitor, V source) extends Propagator&lt;V,E&gt;(visitor, source)
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt;
+		given G satisfies IncidenceGraph&lt;V,E&gt; {
+
+	shared actual {E*} adjacencies =&gt; graph.adjacentEdges(source);
+
+	shared actual V target(E edge) =&gt; edge.target;
+
+	shared actual void backEdge(E edge) =&gt; visitor.backEdge(edge);
+
+	shared actual void examineEdge(E edge) =&gt; visitor.examineEdge(edge);
+
+	shared actual void forwardEdge(E edge) =&gt; visitor.forwardEdge(edge);
+
+	shared actual void nonTreeEdge(E edge) =&gt; visitor.nonTreeEdge(edge);
+
+	shared actual void treeEdge(E edge) =&gt; visitor.treeEdge(edge);
+}
+
+shared class EdgePropagatorFactory&lt;V,E,G&gt;(G graph, EdgeVisitor&lt;V,E&gt; visitor) extends PropagatorFactory&lt;V,E,EdgePropagator&lt;V,E,G&gt;&gt;(visitor)
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt;
+		given G satisfies IncidenceGraph&lt;V,E&gt; {
+
+	shared actual EdgePropagator&lt;V,E,G&gt; propagator(V source) =&gt; EdgePropagator(graph, visitor, source);
+}
+</pre></body></html>

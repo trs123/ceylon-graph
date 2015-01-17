@@ -1,0 +1,31 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>Cycle.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	SimpleGraph
+}
+import graph.directed {
+	DirectedEdge,
+	DirectedGraph
+}
+
+by(&quot;ThorstenSeitz&quot;)
+shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &amp; DirectedGraph&lt;Integer,Link&gt; {
+
+	shared final class Link(shared actual Integer source, shared actual Integer target)
+			satisfies DirectedEdge&lt;Integer, Link&gt; {
+
+		shared actual Link reversed =&gt; Link(target, source);
+	}
+
+	shared actual Link? edgeConnecting(Integer source, Integer target) =&gt; target == source + 1 % n then Link(source, target) else null;
+
+	shared actual {Integer*} neighbors(Integer vertex) =&gt; { vertex + 1 % n };
+
+	// TODO: Eigentlich die schönere Variante als neighbors() ?
+	//shared actual {Link*} outgoingEdgesOf(Integer vertex) =&gt; { Link(vertex, vertex + 1 % n) };
+
+	shared actual {Integer*} vertices =&gt; { 0, n - 1 };
+}
+</pre></body></html>

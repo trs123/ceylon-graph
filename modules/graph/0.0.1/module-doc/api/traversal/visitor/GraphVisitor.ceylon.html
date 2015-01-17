@@ -1,0 +1,57 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>GraphVisitor.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	Edge,
+	AdjacencyGraph,
+	IncidenceGraph
+}
+import graph.traversal {
+	VertexTraversal,
+	GraphTraversal,
+	EdgeTraversal
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface GraphVisitor&lt;V&gt; {
+
+	shared formal void initializeVertex(V vertex);
+	shared formal void examineVertex(V vertex);
+	shared formal void discoverVertex(V vertex);
+	shared formal void finishVertex(V vertex);
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface VertexVisitor&lt;V&gt; satisfies GraphVisitor&lt;V&gt;
+		given V satisfies Object {
+
+	shared VertexTraversal&lt;V,G&gt; vertexTraversal&lt;G&gt;(GraphTraversal&lt;V,G&gt; traversal)
+			given G satisfies AdjacencyGraph&lt;V&gt; {
+		return VertexTraversal(traversal, this);
+	}
+
+	shared formal void examineEdge(V source, V target);
+	shared formal void treeEdge(V source, V target);
+	shared formal void nonTreeEdge(V source, V target);
+	shared formal void backEdge(V source, V target);
+	shared formal void forwardEdge(V source, V target);
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface EdgeVisitor&lt;V,E&gt; satisfies GraphVisitor&lt;V&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt; {
+
+	shared EdgeTraversal&lt;V,E,G&gt; edgeTraversal&lt;G&gt;(GraphTraversal&lt;V,G&gt; traversal)
+			given G satisfies IncidenceGraph&lt;V,E&gt; {
+		return EdgeTraversal&lt;V,E,G&gt;(traversal, this);
+	}
+
+	shared formal void examineEdge(E edge);
+	shared formal void treeEdge(E edge);
+	shared formal void nonTreeEdge(E edge);
+	shared formal void backEdge(E edge);
+	shared formal void forwardEdge(E edge);
+}
+</pre></body></html>
