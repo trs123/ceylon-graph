@@ -24,6 +24,8 @@ shared interface GraphTraversal<V,G>
 	shared formal V? next();
 }
 
+"Graph traversal using a [[Propagator]] to abstract from propagating to neighbors via adjacent vertices
+ or incident edges."
 by ("ThorstenSeitz")
 shared interface PropagatorBasedTraversal<V,G,out P,out Adjacency> satisfies GraphTraversal<V,G>
 		given V satisfies Object
@@ -34,7 +36,7 @@ shared interface PropagatorBasedTraversal<V,G,out P,out Adjacency> satisfies Gra
 }
 
 by ("ThorstenSeitz")
-shared abstract class TraversalDecorator<V,G>(GraphTraversal<V,G> traversal)
+shared abstract class TraversalWrapper<V,G>(GraphTraversal<V,G> traversal)
 		satisfies GraphTraversal<V,G>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V> {
@@ -45,7 +47,7 @@ shared abstract class TraversalDecorator<V,G>(GraphTraversal<V,G> traversal)
 
 by ("ThorstenSeitz")
 shared class VertexTraversal<V,G>(GraphTraversal<V,G> traversal, VertexVisitor<V> visitor)
-		extends TraversalDecorator<V,G>(traversal)
+		extends TraversalWrapper<V,G>(traversal)
 		satisfies PropagatorBasedTraversal<V,G,VertexPropagator<V,G>,V>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V> {
@@ -56,7 +58,7 @@ shared class VertexTraversal<V,G>(GraphTraversal<V,G> traversal, VertexVisitor<V
 
 by ("ThorstenSeitz")
 shared class EdgeTraversal<V,E,G>(GraphTraversal<V,G> traversal, EdgeVisitor<V,E> visitor)
-		extends TraversalDecorator<V,G>(traversal)
+		extends TraversalWrapper<V,G>(traversal)
 		satisfies PropagatorBasedTraversal<V,G,EdgePropagator<V,E,G>,E>
 		given V satisfies Object
 		given E satisfies Edge<V,E>
@@ -65,9 +67,3 @@ shared class EdgeTraversal<V,E,G>(GraphTraversal<V,G> traversal, EdgeVisitor<V,E
 	EdgePropagatorFactory<V,E,G> factory => EdgePropagatorFactory(graph, visitor);
 	shared actual EdgePropagator<V,E,G> propagatorFor(V vertex) => factory.propagator(vertex);
 }
-
-by ("ThorstenSeitz")
-abstract class VertexColor() of white | gray | black {}
-object white extends VertexColor() {}
-object gray extends VertexColor() {}
-object black extends VertexColor() {}

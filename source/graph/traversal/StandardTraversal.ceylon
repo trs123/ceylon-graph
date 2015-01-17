@@ -10,7 +10,14 @@ import graph.traversal.propagator {
 	Propagator
 }
 
-"Generic breadth first search traversal."
+by ("ThorstenSeitz")
+abstract class VertexColor() of white | gray | black {}
+object white extends VertexColor() {}
+object gray extends VertexColor() {}
+object black extends VertexColor() {}
+
+"Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
+ Base for BFS (using a queue) and DFS (using a stack)."
 by ("ThorstenSeitz")
 shared abstract class StandardTraversal<V,G,Adjacency,P>(G graph)
 		satisfies PropagatorBasedTraversal<V,G,P,Adjacency>
