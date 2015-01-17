@@ -28,6 +28,8 @@ shared interface GraphTraversal&lt;V,G&gt;
 	shared formal V? next();
 }
 
+&quot;Graph traversal using a [[Propagator]] to abstract from propagating to neighbors via adjacent vertices
+ or incident edges.&quot;
 by (&quot;ThorstenSeitz&quot;)
 shared interface PropagatorBasedTraversal&lt;V,G,out P,out Adjacency&gt; satisfies GraphTraversal&lt;V,G&gt;
 		given V satisfies Object
@@ -38,7 +40,7 @@ shared interface PropagatorBasedTraversal&lt;V,G,out P,out Adjacency&gt; satisfi
 }
 
 by (&quot;ThorstenSeitz&quot;)
-shared abstract class TraversalDecorator&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; traversal)
+shared abstract class TraversalWrapper&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; traversal)
 		satisfies GraphTraversal&lt;V,G&gt;
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt; {
@@ -49,7 +51,7 @@ shared abstract class TraversalDecorator&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; tr
 
 by (&quot;ThorstenSeitz&quot;)
 shared class VertexTraversal&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; traversal, VertexVisitor&lt;V&gt; visitor)
-		extends TraversalDecorator&lt;V,G&gt;(traversal)
+		extends TraversalWrapper&lt;V,G&gt;(traversal)
 		satisfies PropagatorBasedTraversal&lt;V,G,VertexPropagator&lt;V,G&gt;,V&gt;
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt; {
@@ -60,7 +62,7 @@ shared class VertexTraversal&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; traversal, Ver
 
 by (&quot;ThorstenSeitz&quot;)
 shared class EdgeTraversal&lt;V,E,G&gt;(GraphTraversal&lt;V,G&gt; traversal, EdgeVisitor&lt;V,E&gt; visitor)
-		extends TraversalDecorator&lt;V,G&gt;(traversal)
+		extends TraversalWrapper&lt;V,G&gt;(traversal)
 		satisfies PropagatorBasedTraversal&lt;V,G,EdgePropagator&lt;V,E,G&gt;,E&gt;
 		given V satisfies Object
 		given E satisfies Edge&lt;V,E&gt;
@@ -69,10 +71,4 @@ shared class EdgeTraversal&lt;V,E,G&gt;(GraphTraversal&lt;V,G&gt; traversal, Edg
 	EdgePropagatorFactory&lt;V,E,G&gt; factory =&gt; EdgePropagatorFactory(graph, visitor);
 	shared actual EdgePropagator&lt;V,E,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
 }
-
-by (&quot;ThorstenSeitz&quot;)
-abstract class VertexColor() of white | gray | black {}
-object white extends VertexColor() {}
-object gray extends VertexColor() {}
-object black extends VertexColor() {}
 </pre></body></html>
