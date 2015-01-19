@@ -1,0 +1,72 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>GraphIterator.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	AdjacencyGraph,
+	Edge,
+	IncidenceGraph
+}
+import graph.traversal.propagator {
+	VertexPropagatorFactory,
+	VertexPropagator,
+	EdgePropagatorFactory,
+	EdgePropagator,
+	Propagator
+}
+import graph.traversal.visitor {
+	VertexVisitor,
+	EdgeVisitor
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface GraphIterator&lt;V,G&gt;
+		satisfies Iterator&lt;V&gt;
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt; {
+
+	shared formal G graph;
+	shared formal V start;
+}
+
+&quot;Graph iterator using a [[Propagator]] to abstract from propagating to neighbors via adjacent vertices
+ or incident edges.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared interface PropagatorBasedIterator&lt;V,G,P,Adjacency&gt;
+		satisfies GraphIterator&lt;V,G&gt;
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt;
+		given P satisfies Propagator&lt;V,Adjacency&gt; {
+
+	shared formal P propagatorFor(V vertex);
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface VertexIterator&lt;V,G&gt;
+		satisfies PropagatorBasedIterator&lt;V,G,VertexPropagator&lt;V,G&gt;,V&gt;
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt; {
+
+	shared default VertexVisitor&lt;V&gt; visitor {
+		object vertexVisitor satisfies VertexVisitor&lt;V&gt; {}
+		return vertexVisitor;
+	}
+	shared actual VertexPropagator&lt;V,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
+	VertexPropagatorFactory&lt;V,G&gt; factory =&gt; VertexPropagatorFactory(graph, visitor);
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface EdgeIterator&lt;V,E,G&gt;
+		satisfies PropagatorBasedIterator&lt;V,G,EdgePropagator&lt;V,E,G&gt;,E&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt;
+		given G satisfies IncidenceGraph&lt;V,E&gt; {
+
+	shared default EdgeVisitor&lt;V,E&gt; visitor {
+		object edgeVisitor satisfies EdgeVisitor&lt;V,E&gt; {}
+		return edgeVisitor;
+	}
+	shared actual EdgePropagator&lt;V,E,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
+	EdgePropagatorFactory&lt;V,E,G&gt; factory =&gt; EdgePropagatorFactory(graph, visitor);
+}
+</pre></body></html>

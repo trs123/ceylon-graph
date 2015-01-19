@@ -9,12 +9,26 @@ import graph.directed {
 	DirectedEdge,
 	DirectedGraph
 }
+import graph.traversal {
+	GraphTraversal
+}
+import graph.traversal.iterator {
+	BfsIterator,
+	VertexIterator,
+	EdgeIterator,
+	GraphIterator
+}
+import graph.traversal.propagator {
+	VertexPropagator,
+	EdgePropagator
+}
 
-by(&quot;ThorstenSeitz&quot;)
+&quot;Simple directed graph forming a cycle of `n` vertices.&quot;
+by (&quot;ThorstenSeitz&quot;)
 shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &amp; DirectedGraph&lt;Integer,Link&gt; {
 
 	shared final class Link(shared actual Integer source, shared actual Integer target)
-			satisfies DirectedEdge&lt;Integer, Link&gt; {
+			satisfies DirectedEdge&lt;Integer,Link&gt; {
 
 		shared actual Link reversed =&gt; Link(target, source);
 	}
@@ -23,9 +37,47 @@ shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &a
 
 	shared actual {Integer*} neighbors(Integer vertex) =&gt; { vertex + 1 % n };
 
-	// TODO: Eigentlich die schönere Variante als neighbors() ?
-	//shared actual {Link*} outgoingEdgesOf(Integer vertex) =&gt; { Link(vertex, vertex + 1 % n) };
-
 	shared actual {Integer*} vertices =&gt; { 0, n - 1 };
+
+	shared BfsTraversal bfsTraversal(Integer start) =&gt; BfsTraversal(this, start);
+}
+
+&quot;Breadth first traversal for a [[Cycle]] using a [[VertexPropagator]].&quot;
+shared class BfsTraversal(
+	shared actual Cycle graph,
+	shared actual Integer start)
+		satisfies GraphTraversal&lt;Integer,Cycle&gt; {
+
+	class BFS(Cycle graph, Integer start)
+			extends BfsIterator&lt;Integer,Cycle,Integer,VertexPropagator&lt;Integer,Cycle&gt;&gt;(graph, start)
+			satisfies VertexIterator&lt;Integer,Cycle&gt; {}
+
+	shared actual GraphIterator&lt;Integer,Cycle&gt; graphIterator(Cycle graph, Integer start) =&gt; BFS(graph, start);
+}
+
+&quot;Breadth first traversal for a [[Cycle]] using an [[EdgePropagator]].&quot;
+class BfsEdgeTraversal(
+	shared actual Cycle graph,
+	shared actual Integer start)
+		satisfies GraphTraversal&lt;Integer,Cycle&gt; {
+
+	class BFS(Cycle graph, Integer start)
+			extends BfsIterator&lt;Integer,Cycle,Cycle.Link,EdgePropagator&lt;Integer,Cycle.Link,Cycle&gt;&gt;(graph, start)
+			satisfies EdgeIterator&lt;Integer,Cycle.Link,Cycle&gt; {}
+
+	shared actual GraphIterator&lt;Integer,Cycle&gt; graphIterator(Cycle graph, Integer start) =&gt; BFS(graph, start);
+}
+
+&quot;Example: Create cycle with 10 vertices, then get vertices from example traversals.&quot;
+void example() {
+	Cycle graph = Cycle(10);
+
+	{Integer*} bfs  = graph.bfsTraversal(0).vertices;
+	print(&quot;bfs = ``bfs``&quot;);
+
+	{Integer*} bfs1 = BfsTraversal(graph, 0).vertices;
+	{Integer*} bfs2 = BfsEdgeTraversal(graph, 0).vertices;
+	print(&quot;bfs1 = ``bfs1``&quot;);
+	print(&quot;bfs2 = ``bfs2``&quot;);
 }
 </pre></body></html>

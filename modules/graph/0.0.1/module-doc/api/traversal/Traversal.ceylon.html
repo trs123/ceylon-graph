@@ -3,72 +3,25 @@
 <link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
-	Edge,
-	AdjacencyGraph,
-	IncidenceGraph
+	AdjacencyGraph
 }
-import graph.traversal.propagator {
-	EdgePropagator,
-	EdgePropagatorFactory,
-	Propagator,
-	VertexPropagator,
-	VertexPropagatorFactory
-}
-import graph.traversal.visitor {
-	VertexVisitor,
-	EdgeVisitor
+import graph.traversal.iterator {
+	GraphIterator
 }
 
 by (&quot;ThorstenSeitz&quot;)
 shared interface GraphTraversal&lt;V,G&gt;
+		satisfies Iterable&lt;V&gt;
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt; {
 
 	shared formal G graph;
-	shared formal V? next();
-}
+	shared formal V start;
+	shared formal GraphIterator&lt;V,G&gt; graphIterator(G graph, V start);
 
-&quot;Graph traversal using a [[Propagator]] to abstract from propagating to neighbors via adjacent vertices
- or incident edges.&quot;
-by (&quot;ThorstenSeitz&quot;)
-shared interface PropagatorBasedTraversal&lt;V,G,out P,out Adjacency&gt; satisfies GraphTraversal&lt;V,G&gt;
-		given V satisfies Object
-		given G satisfies AdjacencyGraph&lt;V&gt;
-		given P satisfies Propagator&lt;V,Adjacency&gt; {
+	shared actual Iterator&lt;V&gt; iterator() =&gt; graphIterator(graph, start);
 
-	shared formal P propagatorFor(V vertex);
-}
-
-by (&quot;ThorstenSeitz&quot;)
-shared abstract class TraversalWrapper&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; traversal)
-		satisfies GraphTraversal&lt;V,G&gt;
-		given V satisfies Object
-		given G satisfies AdjacencyGraph&lt;V&gt; {
-
-	shared actual G graph =&gt; traversal.graph;
-	shared actual V? next() =&gt; traversal.next();
-}
-
-by (&quot;ThorstenSeitz&quot;)
-shared class VertexTraversal&lt;V,G&gt;(GraphTraversal&lt;V,G&gt; traversal, VertexVisitor&lt;V&gt; visitor)
-		extends TraversalWrapper&lt;V,G&gt;(traversal)
-		satisfies PropagatorBasedTraversal&lt;V,G,VertexPropagator&lt;V,G&gt;,V&gt;
-		given V satisfies Object
-		given G satisfies AdjacencyGraph&lt;V&gt; {
-
-	VertexPropagatorFactory&lt;V,G&gt; factory =&gt; VertexPropagatorFactory(graph, visitor);
-	shared actual VertexPropagator&lt;V,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
-}
-
-by (&quot;ThorstenSeitz&quot;)
-shared class EdgeTraversal&lt;V,E,G&gt;(GraphTraversal&lt;V,G&gt; traversal, EdgeVisitor&lt;V,E&gt; visitor)
-		extends TraversalWrapper&lt;V,G&gt;(traversal)
-		satisfies PropagatorBasedTraversal&lt;V,G,EdgePropagator&lt;V,E,G&gt;,E&gt;
-		given V satisfies Object
-		given E satisfies Edge&lt;V,E&gt;
-		given G satisfies IncidenceGraph&lt;V,E&gt; {
-
-	EdgePropagatorFactory&lt;V,E,G&gt; factory =&gt; EdgePropagatorFactory(graph, visitor);
-	shared actual EdgePropagator&lt;V,E,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
+	&quot;Answer the vertices of the `graph` reached by this traversal starting by `start` in traversal order.&quot;
+	shared default {V*} vertices =&gt; this;
 }
 </pre></body></html>

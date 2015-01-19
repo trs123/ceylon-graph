@@ -11,7 +11,7 @@
  of an [[graph::AdjacencyGraph]] or as targets of [[adjacent edges|graph::IncidenceGraph.adjacentEdges]]
  of an [[graph::IncidenceGraph]].&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared abstract class Propagator&lt;Vertex,Adjacency&gt;(shared GraphVisitor&lt;Vertex&gt; visitor, Vertex source)
+shared abstract class Propagator&lt;Vertex,Adjacency&gt;(GraphVisitor&lt;Vertex&gt; visitor, Vertex source)
 		given Vertex satisfies Object {
 
 	&quot;Answer the adjacencies allowing access to the neighboring vertices.&quot;
@@ -20,10 +20,28 @@ shared abstract class Propagator&lt;Vertex,Adjacency&gt;(shared GraphVisitor&lt;
 	&quot;Answer the target vertex reached by an adjacency.&quot;
 	shared formal Vertex target(Adjacency adjacency);
 
+	&quot;Calls visitor.examineVertex(source).&quot;
+	shared default void examineVertex() =&gt; visitor.examineVertex(source);
+
+	&quot;Calls visitor.discoverVertex(source).&quot;
+	shared default void discoverVertex() =&gt; visitor.discoverVertex(source);
+
+	&quot;Calls visitor.finishVertex(source).&quot;
+	shared default void finishVertex() =&gt; visitor.finishVertex(source);
+
+	&quot;Calls visitor.examineEdge according to the approprate signature of the visitor&apos;s method.&quot;
 	shared formal void examineEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.treeEdge according to the approprate signature of the visitor&apos;s method.&quot;
 	shared formal void treeEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.nonTreeEdge according to the approprate signature of the visitor&apos;s method.&quot;
 	shared formal void nonTreeEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.backEdge according to the approprate signature of the visitor&apos;s method.&quot;
 	shared formal void backEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.forwardEdge according to the approprate signature of the visitor&apos;s method.&quot;
 	shared formal void forwardEdge(Adjacency adjacency);
 }
 
