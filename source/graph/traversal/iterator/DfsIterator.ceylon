@@ -15,8 +15,8 @@ import graph.traversal.propagator {
 
 "Generic depth first search traversal."
 by ("ThorstenSeitz")
-shared abstract class DfsIterator<V,G,Adjacency,P,Traversal>(G graph, V start) of Traversal
-		extends StandardGraphIterator<V,G,Adjacency,P,Traversal>(graph, start)
+shared abstract class DfsIterator<V,G,Adjacency,P>(G graph, V start)
+		extends StandardGraphIterator<V,G,Adjacency,P>(graph, start)
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
 		given P satisfies Propagator<V,Adjacency> {

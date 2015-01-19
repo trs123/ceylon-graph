@@ -22,11 +22,10 @@ object black extends VertexColor() {}
 "Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
  Base for BFS (using a queue) and DFS (using a stack)."
 by ("ThorstenSeitz")
-shared abstract class StandardGraphIterator<V,G,Adjacency,P,Traversal>(
+shared abstract class StandardGraphIterator<V,G,Adjacency,P>(
 	shared actual G graph,
 	shared actual V start)
-		of Traversal
-		satisfies PropagatorBasedIterator<V,G,P,Adjacency,Traversal>
+		satisfies PropagatorBasedIterator<V,G,P,Adjacency>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
 		given P satisfies Propagator<V,Adjacency> {

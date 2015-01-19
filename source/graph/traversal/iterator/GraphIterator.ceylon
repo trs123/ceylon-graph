@@ -16,7 +16,7 @@ import graph.traversal.visitor {
 }
 
 by ("ThorstenSeitz")
-shared interface GraphIterator<V,G,I> of I
+shared interface GraphIterator<V,G>
 		satisfies Iterator<V>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V> {
@@ -28,8 +28,8 @@ shared interface GraphIterator<V,G,I> of I
 "Graph iterator using a [[Propagator]] to abstract from propagating to neighbors via adjacent vertices
  or incident edges."
 by ("ThorstenSeitz")
-shared interface PropagatorBasedIterator<V,G,P,Adjacency,I> of I
-		satisfies GraphIterator<V,G,I>
+shared interface PropagatorBasedIterator<V,G,P,Adjacency>
+		satisfies GraphIterator<V,G>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
 		given P satisfies Propagator<V,Adjacency> {
@@ -38,8 +38,8 @@ shared interface PropagatorBasedIterator<V,G,P,Adjacency,I> of I
 }
 
 by ("ThorstenSeitz")
-shared interface VertexIterator<V,G,Traversal> of Traversal
-		satisfies PropagatorBasedIterator<V,G,VertexPropagator<V,G>,V,Traversal>
+shared interface VertexIterator<V,G>
+		satisfies PropagatorBasedIterator<V,G,VertexPropagator<V,G>,V>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V> {
 
@@ -52,8 +52,8 @@ shared interface VertexIterator<V,G,Traversal> of Traversal
 }
 
 by ("ThorstenSeitz")
-shared interface EdgeIterator<V,E,G,Traversal> of Traversal
-		satisfies PropagatorBasedIterator<V,G,EdgePropagator<V,E,G>,E,Traversal>
+shared interface EdgeIterator<V,E,G>
+		satisfies PropagatorBasedIterator<V,G,EdgePropagator<V,E,G>,E>
 		given V satisfies Object
 		given E satisfies Edge<V,E>
 		given G satisfies IncidenceGraph<V,E> {
