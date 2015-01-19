@@ -5,12 +5,22 @@ import graph.directed {
 	DirectedEdge,
 	DirectedGraph
 }
+import graph.traversal {
+	GraphTraversal
+}
+import graph.traversal.iterator {
+	BfsIterator,
+	VertexIterator
+}
+import graph.traversal.propagator {
+	VertexPropagator
+}
 
-by("ThorstenSeitz")
+by ("ThorstenSeitz")
 shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & DirectedGraph<Integer,Link> {
 
 	shared final class Link(shared actual Integer source, shared actual Integer target)
-			satisfies DirectedEdge<Integer, Link> {
+			satisfies DirectedEdge<Integer,Link> {
 
 		shared actual Link reversed => Link(target, source);
 	}
@@ -19,8 +29,20 @@ shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & Direct
 
 	shared actual {Integer*} neighbors(Integer vertex) => { vertex + 1 % n };
 
-	// TODO: Eigentlich die schönere Variante als neighbors() ?
-	//shared actual {Link*} outgoingEdgesOf(Integer vertex) => { Link(vertex, vertex + 1 % n) };
-
 	shared actual {Integer*} vertices => { 0, n - 1 };
 }
+
+class BfsTraversal(
+	shared actual Cycle graph,
+	shared actual Integer start)
+		satisfies GraphTraversal<Integer,Cycle,BFS> {
+
+	shared class BFS(Cycle graph, Integer start)
+			extends BfsIterator<Integer,Cycle,Integer,VertexPropagator<Integer,Cycle>,BFS>(graph, start)
+			satisfies VertexIterator<Integer,Cycle,BFS> {}
+
+	shared actual BFS graphIterator(Cycle graph, Integer start) => BFS(graph, start);
+}
+
+Cycle graph = Cycle(10);
+{Integer*} bfs = BfsTraversal(graph, 0).vertices;
