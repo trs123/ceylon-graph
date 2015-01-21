@@ -6,7 +6,7 @@ import graph.traversal.visitor {
 }
 
 by ("ThorstenSeitz")
-shared class VertexPropagator<V,G>(G graph, VertexVisitor<V> visitor, V source) extends Propagator<V,V>(visitor, source)
+shared class VertexPropagator<V,G>(G graph, VertexVisitor<V> visitor, V source) extends GraphPropagator<V,V>(visitor, source)
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V> {
 

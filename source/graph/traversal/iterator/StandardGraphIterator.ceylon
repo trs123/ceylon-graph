@@ -10,7 +10,10 @@ import graph.traversal.iterator {
 	PropagatorBasedIterator
 }
 import graph.traversal.propagator {
-	Propagator
+	GraphPropagator
+}
+import graph.traversal.visitor {
+	GraphVisitor
 }
 
 by ("ThorstenSeitz")
@@ -22,13 +25,14 @@ object black extends VertexColor() {}
 "Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
  Base for BFS (using a queue) and DFS (using a stack)."
 by ("ThorstenSeitz")
-shared abstract class StandardGraphIterator<V,G,Adjacency,P>(
-	shared actual G graph,
-	shared actual V start)
-		satisfies PropagatorBasedIterator<V,G,P,Adjacency>
+shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>(
+	shared actual G graph, // TODO: not needed here
+	shared actual Visitor visitor) // TODO: not needed here
+		satisfies PropagatorBasedIterator<V,G,P,Adjacency,Visitor>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
-		given P satisfies Propagator<V,Adjacency> {
+		given P satisfies GraphPropagator<V,Adjacency>
+		given Visitor satisfies GraphVisitor<V> {
 
 	MutableMap<V,VertexColor> colorMap = HashMap<V,VertexColor>();
 
@@ -63,9 +67,9 @@ shared abstract class StandardGraphIterator<V,G,Adjacency,P>(
 	}
 
 	// TODO: unschön!?
-	shared default void startWith(V vertex) {
+	shared actual void startWith(V vertex) {
 		colorMap.clear();
-		discoverVertex(start);
+		discoverVertex(vertex);
 	}
 
 	shared formal void push(V vertex);

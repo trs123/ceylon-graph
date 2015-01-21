@@ -32,3 +32,18 @@ shared interface EdgeVisitor<V,E> satisfies GraphVisitor<V>
 	shared default void backEdge(E edge) {}
 	shared default void forwardEdge(E edge) {}
 }
+
+by ("ThorstenSeitz")
+shared VertexVisitor<V> nullVertexVisitor<V>()
+		given V satisfies Object {
+	object nullVisitor satisfies VertexVisitor<V> {}
+	return nullVisitor;
+}
+
+by ("ThorstenSeitz")
+shared EdgeVisitor<V,E> nullEdgeVisitor<V,E>()
+		given V satisfies Object
+		given E satisfies Edge<V,E> {
+	object nullVisitor satisfies EdgeVisitor<V,E> {}
+	return nullVisitor;
+}
