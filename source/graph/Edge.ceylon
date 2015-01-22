@@ -1,6 +1,6 @@
 "A generic edge between two vertices of type Vertex."
-by("ThorstenSeitz")
-shared interface Edge<out Vertex, E> of E
+by ("ThorstenSeitz")
+shared interface Edge<out Vertex,E> of E
 		given Vertex satisfies Object {
 
 	"The source vertex of the edge."
@@ -23,6 +23,8 @@ shared interface Edge<out Vertex, E> of E
 		assert (endpoint == source || endpoint == target);
 		return endpoint == source then target else source;
 	}
+
+	shared formal E self;
 
 	shared formal E reversed;
 

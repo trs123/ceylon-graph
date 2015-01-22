@@ -1,8 +1,3 @@
-import ceylon.collection {
-	MutableMap,
-	HashMap
-}
-
 import graph {
 	AdjacencyGraph
 }
@@ -16,12 +11,6 @@ import graph.traversal.visitor {
 	GraphVisitor
 }
 
-by ("ThorstenSeitz")
-abstract class VertexColor() of white | gray | black {}
-object white extends VertexColor() {}
-object gray extends VertexColor() {}
-object black extends VertexColor() {}
-
 "Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
  Base for BFS (using a queue) and DFS (using a stack)."
 by ("ThorstenSeitz")
@@ -34,7 +23,7 @@ shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>(
 		given P satisfies GraphPropagator<V,Adjacency>
 		given Visitor satisfies GraphVisitor<V> {
 
-	MutableMap<V,VertexColor> colorMap = HashMap<V,VertexColor>();
+	ColorMap<V> colorMap = ColorMap<V>();
 
 	shared actual V|Finished next() {
 		V? source = nextVertex();
@@ -60,7 +49,7 @@ shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>(
 					}
 				}
 			}
-			setBlack(source);
+			colorMap.setColor(source, black);
 			propagator.finishVertex();
 			return source;
 		}
@@ -77,22 +66,18 @@ shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>(
 	shared formal V? nextVertex();
 
 	void discoverVertex(V vertex) {
-		colorMap.put(vertex, gray);
+		colorMap.setColor(vertex, gray);
 		push(vertex);
 	}
 
-	void setBlack(V vertex) {
-		colorMap.put(vertex, black);
-	}
-
 	Boolean shouldFollowVertex(V vertex) {
-		switch (colorMap.get(vertex))
+		switch (colorMap.getColor(vertex))
 		case (white) { return true; }
 		else { return false; }
 	}
 
 	Boolean isBackEdge(V vertex) {
-		switch (colorMap.get(vertex))
+		switch (colorMap.getColor(vertex))
 		case (gray) { return true; }
 		else { return false; }
 	}

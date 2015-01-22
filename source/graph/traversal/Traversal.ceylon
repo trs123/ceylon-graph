@@ -19,16 +19,13 @@ shared interface GraphTraversal<V,G,Visitor>
 		given G satisfies AdjacencyGraph<V>
 		given Visitor satisfies GraphVisitor<V> {
 
-	shared alias TraversalIterator => GraphIterator<V,G,Visitor>;
-	shared alias TraversalVisitor => Visitor;
-
 	shared formal G graph;
 	shared formal V start;
 	shared formal Visitor visitor;
-	shared formal TraversalIterator graphIterator(G graph, V start, Visitor visitor);
+	shared formal GraphIterator<V,G,Visitor> graphIterator(G graph, V start, Visitor visitor);
 
 	shared actual Iterator<V> iterator() {
-		TraversalIterator it = graphIterator(graph, start, visitor);
+		GraphIterator<V,G,Visitor> it = graphIterator(graph, start, visitor);
 		it.startWith(start);
 		return it;
 	}

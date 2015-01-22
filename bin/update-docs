@@ -1,4 +1,4 @@
 #!/bin/sh
 
 ROOT=$(dirname $PWD/$0)/..
-ceylon doc graph --source-code --out=$ROOT/../ceylon-graph-gh-pages/modules
+ceylon doc --source-code --link=http://modules.ceylon-lang.org/repo/1/ --out=$ROOT/../ceylon-graph-gh-pages/modules graph examples tests.graph

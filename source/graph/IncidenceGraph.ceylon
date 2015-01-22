@@ -4,20 +4,20 @@
  will not return (this is similar to an [[ceylon.language::Iterable]] which may contain an infinite number of elements).
 
  The same applies for the neighbors or adjacent edges of a vertex."
-by("ThorstenSeitz")
+by ("ThorstenSeitz")
 shared interface IncidenceGraph<V,E> satisfies AdjacencyGraph<V>
 		given V satisfies Object
-		given E satisfies Edge<V, E> {
+		given E satisfies Edge<V,E> {
 
 	"All edges of the graph."
 	shared formal {E*} edges;
 
 	"The adjacent edges of the given vertex. A directed edge is adjacent if it is outgoing.
-	 The edges are answered such that the following conditions hold:
-	     edge.source == vertex
-	     neighbors(vertex).contains(edge.target)"
+	    The edges are answered such that the following conditions hold:
+	        edge.source == vertex
+	        neighbors(vertex).contains(edge.target)"
 	shared default {E*} adjacentEdges(V vertex) {
-		return edges.filter((E edge) => edge.isIncident(vertex)).map((E edge) => edge.source == vertex then edge else edge);
+		return edges.filter((E edge) => edge.isIncident(vertex)).map((E edge) => edge.source == vertex then edge else edge.reversed);
 	}
 
 	"Apply action(E) for each adjacent edge of the given vertex."
@@ -29,7 +29,7 @@ shared interface IncidenceGraph<V,E> satisfies AdjacencyGraph<V>
 
 	// Implementation note: The default implementation is based on [[adjacentEdges]].
 	shared actual default {V*} neighbors(V vertex) {
-		return adjacentEdges(vertex).map(Edge<V, E>.target);
+		return adjacentEdges(vertex).map(Edge<V,E>.target);
 	}
 
 	// Implementation note: The default implementation is based on [[adjacentEdges]].
