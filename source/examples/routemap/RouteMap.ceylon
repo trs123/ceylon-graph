@@ -56,23 +56,29 @@ shared final class Route(
 by ("ThorstenSeitz")
 shared final class RouteMap({City*} cities, {Route*} routes) satisfies Multigraph<City,Route> & IncidenceGraph<City,Route> & UndirectedGraph<City,Route> {
 
+	"All possible [[routes|Route]] between [[cities|City]]."
 	shared actual {Route*} edges => routes;
 
+	"All [[cities|City]]."
 	shared actual {City*} vertices => cities;
 
+	"An accessor for the [[distance|Route.distance]] of a route."
 	shared object distances satisfies Weights<Distance,Route> {
 		shared actual Distance weight(Route route) => route.distance;
 		shared actual Distance zero => km(0);
 	}
 
+	"An accessor for the [[travel time|Route.travelTime]] of a route."
 	shared object travelTimes satisfies Weights<Period,Route> {
 		shared actual Period weight(Route route) => route.travelTime;
 		shared actual Period zero => zeroPeriod;
 	}
 
+	"Answer all routes between the given cities."
 	shared actual {Route*} edgesConnecting(City source, City target) => adjacentEdges(source).filter((Route route) => route.target == target);
 }
 
+"This example combines a concrete [[RouteMap]] with a named list of the cities forming its vertices."
 shared object example {
 	shared City leipzig = City("Leipzig");
 	shared City hamburg = City("Hamburg");
