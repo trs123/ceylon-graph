@@ -14,9 +14,7 @@ import graph.traversal.visitor {
 "Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
  Base for BFS (using a queue) and DFS (using a stack)."
 by ("ThorstenSeitz")
-shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>(
-	shared actual G graph, // TODO: not needed here
-	shared actual Visitor visitor) // TODO: not needed here
+shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>()
 		satisfies PropagatorBasedIterator<V,G,P,Adjacency,Visitor>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
@@ -55,7 +53,7 @@ shared abstract class StandardGraphIterator<V,G,Adjacency,P,Visitor>(
 		}
 	}
 
-	// TODO: unschön!?
+	"Must be called immediately after creation."
 	shared actual void startWith(V vertex) {
 		colorMap.clear();
 		discoverVertex(vertex);
