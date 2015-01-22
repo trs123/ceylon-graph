@@ -22,8 +22,8 @@ import graph.traversal.visitor {
 
 &quot;Generic breadth first search traversal.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared abstract class BfsIterator&lt;V,G,Adjacency,P,Visitor&gt;(G graph, Visitor visitor)
-		extends StandardGraphIterator&lt;V,G,Adjacency,P,Visitor&gt;(graph, visitor)
+shared abstract class BfsIterator&lt;V,G,Adjacency,P,Visitor&gt;()
+		extends StandardGraphIterator&lt;V,G,Adjacency,P,Visitor&gt;()
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt;
 		given P satisfies GraphPropagator&lt;V,Adjacency&gt;

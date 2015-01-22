@@ -73,17 +73,17 @@ shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &a
 	class BfsTraversal(
 		shared actual Cycle graph,
 		shared actual Integer start,
-		shared actual VertexVisitor visitor)
-			satisfies VertexTraversal {
+		shared actual VertexVisitor visitor) satisfies VertexTraversal {
 
-		class BFS(Cycle graph, Integer start, VertexVisitor visitor)
-				extends BfsIterator&lt;Integer,Cycle,Integer,VertexPropagator,VertexVisitor&gt;(graph, visitor)
-				satisfies VertexIterator {}
-
-		shared actual VertexIterator graphIterator(
-			Cycle graph,
-			Integer start,
-			VertexVisitor visitor) =&gt; BFS(graph, start, visitor);
+		shared actual VertexIterator graphIterator() {
+			object bfs
+					extends BfsIterator&lt;Integer,Cycle,Integer,VertexPropagator,VertexVisitor&gt;()
+					satisfies VertexIterator {
+				shared actual Cycle graph =&gt; outer.graph;
+				shared actual GenericVertexVisitor&lt;Integer&gt; visitor =&gt; outer.visitor;
+			}
+			return bfs;
+		}
 	}
 }
 

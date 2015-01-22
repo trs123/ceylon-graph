@@ -26,10 +26,10 @@ shared interface GraphTraversal&lt;V,G,Visitor&gt;
 	shared formal G graph;
 	shared formal V start;
 	shared formal Visitor visitor;
-	shared formal GraphIterator&lt;V,G,Visitor&gt; graphIterator(G graph, V start, Visitor visitor);
+	shared formal GraphIterator&lt;V,G,Visitor&gt; graphIterator();
 
 	shared actual Iterator&lt;V&gt; iterator() {
-		GraphIterator&lt;V,G,Visitor&gt; it = graphIterator(graph, start, visitor);
+		GraphIterator&lt;V,G,Visitor&gt; it = graphIterator();
 		it.startWith(start);
 		return it;
 	}
