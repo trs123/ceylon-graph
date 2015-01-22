@@ -8,20 +8,20 @@
  will not return (this is similar to an [[ceylon.language::Iterable]] which may contain an infinite number of elements).
 
  The same applies for the neighbors or adjacent edges of a vertex.&quot;
-by(&quot;ThorstenSeitz&quot;)
+by (&quot;ThorstenSeitz&quot;)
 shared interface IncidenceGraph&lt;V,E&gt; satisfies AdjacencyGraph&lt;V&gt;
 		given V satisfies Object
-		given E satisfies Edge&lt;V, E&gt; {
+		given E satisfies Edge&lt;V,E&gt; {
 
 	&quot;All edges of the graph.&quot;
 	shared formal {E*} edges;
 
 	&quot;The adjacent edges of the given vertex. A directed edge is adjacent if it is outgoing.
-	 The edges are answered such that the following conditions hold:
-	     edge.source == vertex
-	     neighbors(vertex).contains(edge.target)&quot;
+	    The edges are answered such that the following conditions hold:
+	        edge.source == vertex
+	        neighbors(vertex).contains(edge.target)&quot;
 	shared default {E*} adjacentEdges(V vertex) {
-		return edges.filter((E edge) =&gt; edge.isIncident(vertex)).map((E edge) =&gt; edge.source == vertex then edge else edge);
+		return edges.filter((E edge) =&gt; edge.isIncident(vertex)).map((E edge) =&gt; edge.source == vertex then edge else edge.reversed);
 	}
 
 	&quot;Apply action(E) for each adjacent edge of the given vertex.&quot;
@@ -33,7 +33,7 @@ shared interface IncidenceGraph&lt;V,E&gt; satisfies AdjacencyGraph&lt;V&gt;
 
 	// Implementation note: The default implementation is based on [[adjacentEdges]].
 	shared actual default {V*} neighbors(V vertex) {
-		return adjacentEdges(vertex).map(Edge&lt;V, E&gt;.target);
+		return adjacentEdges(vertex).map(Edge&lt;V,E&gt;.target);
 	}
 
 	// Implementation note: The default implementation is based on [[adjacentEdges]].

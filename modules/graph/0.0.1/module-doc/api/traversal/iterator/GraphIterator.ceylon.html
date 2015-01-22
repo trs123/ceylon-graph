@@ -12,60 +12,58 @@ import graph.traversal.propagator {
 	VertexPropagator,
 	EdgePropagatorFactory,
 	EdgePropagator,
-	Propagator
+	GraphPropagator
 }
 import graph.traversal.visitor {
 	VertexVisitor,
-	EdgeVisitor
+	EdgeVisitor,
+	GraphVisitor
 }
 
 by (&quot;ThorstenSeitz&quot;)
-shared interface GraphIterator&lt;V,G&gt;
+shared interface GraphIterator&lt;V,G,Visitor&gt;
 		satisfies Iterator&lt;V&gt;
 		given V satisfies Object
-		given G satisfies AdjacencyGraph&lt;V&gt; {
+		given G satisfies AdjacencyGraph&lt;V&gt;
+		given Visitor satisfies GraphVisitor&lt;V&gt; {
 
 	shared formal G graph;
-	shared formal V start;
+	shared formal Visitor visitor;
+
+	shared formal void startWith(V vertex);
 }
 
-&quot;Graph iterator using a [[Propagator]] to abstract from propagating to neighbors via adjacent vertices
+&quot;Graph iterator using a [[GraphPropagator]] to abstract from propagating to neighbors via adjacent vertices
  or incident edges.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface PropagatorBasedIterator&lt;V,G,P,Adjacency&gt;
-		satisfies GraphIterator&lt;V,G&gt;
+shared interface PropagatorBasedIterator&lt;V,G,P,Adjacency,Visitor&gt;
+		satisfies GraphIterator&lt;V,G,Visitor&gt;
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt;
-		given P satisfies Propagator&lt;V,Adjacency&gt; {
+		given P satisfies GraphPropagator&lt;V,Adjacency&gt;
+		given Visitor satisfies GraphVisitor&lt;V&gt; {
 
+	shared alias Propagator =&gt; GraphPropagator&lt;V,Adjacency&gt;;
 	shared formal P propagatorFor(V vertex);
 }
 
 by (&quot;ThorstenSeitz&quot;)
 shared interface VertexIterator&lt;V,G&gt;
-		satisfies PropagatorBasedIterator&lt;V,G,VertexPropagator&lt;V,G&gt;,V&gt;
+		satisfies PropagatorBasedIterator&lt;V,G,VertexPropagator&lt;V,G&gt;,V,VertexVisitor&lt;V&gt;&gt;
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt; {
 
-	shared default VertexVisitor&lt;V&gt; visitor {
-		object vertexVisitor satisfies VertexVisitor&lt;V&gt; {}
-		return vertexVisitor;
-	}
 	shared actual VertexPropagator&lt;V,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
 	VertexPropagatorFactory&lt;V,G&gt; factory =&gt; VertexPropagatorFactory(graph, visitor);
 }
 
 by (&quot;ThorstenSeitz&quot;)
 shared interface EdgeIterator&lt;V,E,G&gt;
-		satisfies PropagatorBasedIterator&lt;V,G,EdgePropagator&lt;V,E,G&gt;,E&gt;
+		satisfies PropagatorBasedIterator&lt;V,G,EdgePropagator&lt;V,E,G&gt;,E,EdgeVisitor&lt;V,E&gt;&gt;
 		given V satisfies Object
 		given E satisfies Edge&lt;V,E&gt;
 		given G satisfies IncidenceGraph&lt;V,E&gt; {
 
-	shared default EdgeVisitor&lt;V,E&gt; visitor {
-		object edgeVisitor satisfies EdgeVisitor&lt;V,E&gt; {}
-		return edgeVisitor;
-	}
 	shared actual EdgePropagator&lt;V,E,G&gt; propagatorFor(V vertex) =&gt; factory.propagator(vertex);
 	EdgePropagatorFactory&lt;V,E,G&gt; factory =&gt; EdgePropagatorFactory(graph, visitor);
 }

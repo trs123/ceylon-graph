@@ -1,0 +1,120 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>RouteMap.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.time {
+	Period,
+	zeroPeriod=zero
+}
+
+import graph {
+	IncidenceGraph,
+	Walk,
+	Weights
+}
+import graph.multigraph {
+	Multigraph
+}
+import graph.undirected {
+	UndirectedEdge,
+	UndirectedGraph
+}
+
+&quot;Convenience function to create periods from hours and minutes only.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared Period period(Integer hours, Integer minutes) =&gt; Period(0, 0, 0, hours, minutes, 0, 0);
+
+&quot;Convenience function to create a [[Distance]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared Distance km(Integer kilometers, Integer meters = 0) =&gt; Distance(kilometers * 1000 + meters);
+
+&quot;Distance measured in km.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared final class Distance(shared Integer meters) satisfies Summable&lt;Distance&gt; {
+	shared actual Distance plus(Distance other) =&gt; Distance(meters + other.meters);
+}
+
+&quot;A city.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared final class City(shared String name) satisfies Comparable&lt;City&gt; {
+	shared actual Comparison compare(City other) =&gt; name.compare(other.name);
+}
+
+&quot;A route between two cities.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared final class Route(
+	shared String name,
+	shared actual City source,
+	shared actual City target,
+	shared Distance distance,
+	shared Period travelTime) satisfies UndirectedEdge&lt;City,Route&gt; {
+
+	shared actual Route self =&gt; this;
+	shared actual Route reversed =&gt; Route(name, target, source, distance, travelTime);
+}
+
+&quot;A route map of [[cities|City]] connected by undirected [[routes|Route]] with a given [[distance|Distance]]
+ and [[travel time|ceylon.time::Period]].
+ The same cities may be connected by multiple routes (e.g. Autobahn or Bundesstraße) with different distances
+ and travel times. The route map is therefore a [[Multigraph]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared final class RouteMap({City*} cities, {Route*} routes) satisfies Multigraph&lt;City,Route&gt; &amp; IncidenceGraph&lt;City,Route&gt; &amp; UndirectedGraph&lt;City,Route&gt; {
+
+	&quot;All possible [[routes|Route]] between [[cities|City]].&quot;
+	shared actual {Route*} edges =&gt; routes;
+
+	&quot;All [[cities|City]].&quot;
+	shared actual {City*} vertices =&gt; cities;
+
+	&quot;An accessor for the [[distance|Route.distance]] of a route.&quot;
+	shared object distances satisfies Weights&lt;Distance,Route&gt; {
+		shared actual Distance weight(Route route) =&gt; route.distance;
+		shared actual Distance zero =&gt; km(0);
+	}
+
+	&quot;An accessor for the [[travel time|Route.travelTime]] of a route.&quot;
+	shared object travelTimes satisfies Weights&lt;Period,Route&gt; {
+		shared actual Period weight(Route route) =&gt; route.travelTime;
+		shared actual Period zero =&gt; zeroPeriod;
+	}
+
+	&quot;Answer all routes between the given cities.&quot;
+	shared actual {Route*} edgesConnecting(City source, City target) =&gt; adjacentEdges(source).filter((Route route) =&gt; route.target == target);
+}
+
+&quot;This example combines a concrete [[RouteMap]] with a named list of the cities forming its vertices.&quot;
+shared object example {
+	shared City leipzig = City(&quot;Leipzig&quot;);
+	shared City hamburg = City(&quot;Hamburg&quot;);
+	shared City berlin = City(&quot;Berlin&quot;);
+	shared City hannover = City(&quot;Hannover&quot;);
+	shared City kassel = City(&quot;Kassel&quot;);
+	shared RouteMap routeMap = RouteMap(
+		{ berlin, hamburg, hannover, kassel, leipzig },
+		{
+			Route(&quot;A7&quot;, hamburg, hannover, km(151), period(1, 38)),
+			Route(&quot;B3&quot;, hamburg, hannover, km(159), period(3, 15)),
+			Route(&quot;A2&quot;, hannover, berlin, km(285), period(3, 4)),
+			Route(&quot;B188&quot;, hannover, berlin, km(292), period(5, 4)),
+			Route(&quot;A24&quot;, hamburg, berlin, km(288), period(2, 54)),
+			Route(&quot;A9&quot;, berlin, leipzig, km(190), period(2, 11)),
+			Route(&quot;B2&quot;, berlin, leipzig, km(174), period(3, 31)),
+			Route(&quot;B79&quot;, hannover, leipzig, km(263), period(4,38)),
+			Route(&quot;A38&quot;, leipzig, kassel, km(254), period(2, 26)),
+			Route(&quot;A4&quot;, leipzig, kassel, km(287), period(3, 23)),
+			Route(&quot;B249&quot;, leipzig, kassel, km(258), period(4, 34)),
+			Route(&quot;A7&quot;, hannover, kassel, km(167), period(1, 54)),
+			Route(&quot;B3&quot;, hannover, kassel, km(156), period(2, 44))
+		});
+}
+
+&quot;Example code demonstrating how to calculate different distances on a path or [[walk|Walk]].&quot;
+shared void printPathInfo(RouteMap routeMap, Walk&lt;City,Route&gt; shortestPath) {
+
+	Distance distance = shortestPath.distance(routeMap.distances);
+	Period travelTime = shortestPath.distance(routeMap.travelTimes);
+
+	print(&quot;Distance = ``distance``&quot;);
+	print(&quot;Travel time = ``travelTime``&quot;);
+}
+</pre></body></html>

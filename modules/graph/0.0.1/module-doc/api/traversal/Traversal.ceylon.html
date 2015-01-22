@@ -3,25 +3,53 @@
 <link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
-	AdjacencyGraph
+	AdjacencyGraph,
+	Edge,
+	IncidenceGraph
 }
 import graph.traversal.iterator {
 	GraphIterator
 }
+import graph.traversal.visitor {
+	GraphVisitor,
+	VertexVisitor,
+	EdgeVisitor
+}
 
 by (&quot;ThorstenSeitz&quot;)
-shared interface GraphTraversal&lt;V,G&gt;
+shared interface GraphTraversal&lt;V,G,Visitor&gt;
 		satisfies Iterable&lt;V&gt;
 		given V satisfies Object
-		given G satisfies AdjacencyGraph&lt;V&gt; {
+		given G satisfies AdjacencyGraph&lt;V&gt;
+		given Visitor satisfies GraphVisitor&lt;V&gt; {
 
 	shared formal G graph;
 	shared formal V start;
-	shared formal GraphIterator&lt;V,G&gt; graphIterator(G graph, V start);
+	shared formal Visitor visitor;
+	shared formal GraphIterator&lt;V,G,Visitor&gt; graphIterator(G graph, V start, Visitor visitor);
 
-	shared actual Iterator&lt;V&gt; iterator() =&gt; graphIterator(graph, start);
+	shared actual Iterator&lt;V&gt; iterator() {
+		GraphIterator&lt;V,G,Visitor&gt; it = graphIterator(graph, start, visitor);
+		it.startWith(start);
+		return it;
+	}
 
 	&quot;Answer the vertices of the `graph` reached by this traversal starting by `start` in traversal order.&quot;
 	shared default {V*} vertices =&gt; this;
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface VertexTraversal&lt;V,G&gt;
+		satisfies GraphTraversal&lt;V,G,VertexVisitor&lt;V&gt;&gt;
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt; {
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared interface EdgeTraversal&lt;V,E,G&gt;
+		satisfies GraphTraversal&lt;V,G,EdgeVisitor&lt;V,E&gt;&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt;
+		given G satisfies IncidenceGraph&lt;V,E&gt; {
 }
 </pre></body></html>

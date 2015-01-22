@@ -1,0 +1,83 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>PropagatorTests.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.test {
+	test,
+	assertEquals,
+	assertTrue
+}
+
+import examples.cycle {
+	Cycle
+}
+import examples.routemap {
+	RouteMap,
+	City,
+	Route,
+	example
+}
+
+import graph.traversal.propagator {
+	VertexPropagatorFactory,
+	VertexPropagator,
+	EdgePropagatorFactory,
+	EdgePropagator
+}
+import graph.traversal.visitor {
+	nullVertexVisitor,
+	VertexVisitor,
+	nullEdgeVisitor,
+	EdgeVisitor
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared class VertexPropagatorTests() {
+
+	Cycle cycle = Cycle(10);
+	VertexVisitor&lt;Integer&gt; visitor = nullVertexVisitor&lt;Integer&gt;();
+	VertexPropagatorFactory&lt;Integer,Cycle&gt; vertexPropagatorFactory = VertexPropagatorFactory&lt;Integer,Cycle&gt;(cycle, visitor);
+
+	test
+	shared void shouldPropagateToNeighbors() {
+		VertexPropagator&lt;Integer,Cycle&gt; vertexPropagator = vertexPropagatorFactory.propagator(1);
+		assertEquals(vertexPropagator.adjacencies.sequence(), [2]);
+	}
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared class EdgePropagatorTests() {
+
+	RouteMap routeMap = example.routeMap;
+	EdgeVisitor&lt;City,Route&gt; visitor = nullEdgeVisitor&lt;City,Route&gt;();
+	EdgePropagatorFactory&lt;City,Route,RouteMap&gt; edgePropagatorFactory = EdgePropagatorFactory&lt;City,Route,RouteMap&gt;(routeMap, visitor);
+
+	test
+	shared void shouldPropagateViaEdges() {
+		EdgePropagator&lt;City,Route,RouteMap&gt; edgePropagator = edgePropagatorFactory.propagator(example.hannover);
+		assertEquals(
+			sort(edgePropagator.adjacencies.map(Route.name)),
+			[&quot;A2&quot;, &quot;A7&quot;, &quot;A7&quot;, &quot;B188&quot;, &quot;B3&quot;, &quot;B3&quot;, &quot;B79&quot;]);
+	}
+
+	test
+	shared void shouldOrientEdgesOutwards() {
+		City source = example.hannover;
+		EdgePropagator&lt;City,Route,RouteMap&gt; edgePropagator = edgePropagatorFactory.propagator(source);
+		assertTrue(edgePropagator.adjacencies.map(Route.source).every((City city) =&gt; city == source));
+		assertEquals(
+			sort(edgePropagator.adjacencies.map(Route.target).map(City.name)),
+			[&quot;Berlin&quot;, &quot;Berlin&quot;, &quot;Hamburg&quot;, &quot;Hamburg&quot;, &quot;Kassel&quot;, &quot;Kassel&quot;, &quot;Leipzig&quot;]);
+	}
+
+	test
+	shared void shouldOrientEdgesOutwards2() {
+		City source = example.hamburg;
+		EdgePropagator&lt;City,Route,RouteMap&gt; edgePropagator = edgePropagatorFactory.propagator(source);
+		assertTrue(edgePropagator.adjacencies.map(Route.source).every((City city) =&gt; city == source));
+		assertEquals(
+			sort(edgePropagator.adjacencies.map(Route.target).map(City.name)),
+			[&quot;Berlin&quot;, &quot;Hannover&quot;, &quot;Hannover&quot;]);
+	}
+}
+</pre></body></html>

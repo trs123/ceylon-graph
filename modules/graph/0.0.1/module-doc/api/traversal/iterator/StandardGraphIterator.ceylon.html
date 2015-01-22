@@ -2,39 +2,32 @@
 <title>StandardGraphIterator.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
 <link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
-<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.collection {
-	MutableMap,
-	HashMap
-}
-
-import graph {
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
 	AdjacencyGraph
 }
 import graph.traversal.iterator {
 	PropagatorBasedIterator
 }
 import graph.traversal.propagator {
-	Propagator
+	GraphPropagator
 }
-
-by (&quot;ThorstenSeitz&quot;)
-abstract class VertexColor() of white | gray | black {}
-object white extends VertexColor() {}
-object gray extends VertexColor() {}
-object black extends VertexColor() {}
+import graph.traversal.visitor {
+	GraphVisitor
+}
 
 &quot;Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
  Base for BFS (using a queue) and DFS (using a stack).&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared abstract class StandardGraphIterator&lt;V,G,Adjacency,P&gt;(
-	shared actual G graph,
-	shared actual V start)
-		satisfies PropagatorBasedIterator&lt;V,G,P,Adjacency&gt;
+shared abstract class StandardGraphIterator&lt;V,G,Adjacency,P,Visitor&gt;(
+	shared actual G graph, // TODO: not needed here
+	shared actual Visitor visitor) // TODO: not needed here
+		satisfies PropagatorBasedIterator&lt;V,G,P,Adjacency,Visitor&gt;
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt;
-		given P satisfies Propagator&lt;V,Adjacency&gt; {
+		given P satisfies GraphPropagator&lt;V,Adjacency&gt;
+		given Visitor satisfies GraphVisitor&lt;V&gt; {
 
-	MutableMap&lt;V,VertexColor&gt; colorMap = HashMap&lt;V,VertexColor&gt;();
+	ColorMap&lt;V&gt; colorMap = ColorMap&lt;V&gt;();
 
 	shared actual V|Finished next() {
 		V? source = nextVertex();
@@ -60,16 +53,16 @@ shared abstract class StandardGraphIterator&lt;V,G,Adjacency,P&gt;(
 					}
 				}
 			}
-			setBlack(source);
+			colorMap.setColor(source, black);
 			propagator.finishVertex();
 			return source;
 		}
 	}
 
 	// TODO: unschön!?
-	shared default void startWith(V vertex) {
+	shared actual void startWith(V vertex) {
 		colorMap.clear();
-		discoverVertex(start);
+		discoverVertex(vertex);
 	}
 
 	shared formal void push(V vertex);
@@ -77,22 +70,18 @@ shared abstract class StandardGraphIterator&lt;V,G,Adjacency,P&gt;(
 	shared formal V? nextVertex();
 
 	void discoverVertex(V vertex) {
-		colorMap.put(vertex, gray);
+		colorMap.setColor(vertex, gray);
 		push(vertex);
 	}
 
-	void setBlack(V vertex) {
-		colorMap.put(vertex, black);
-	}
-
 	Boolean shouldFollowVertex(V vertex) {
-		switch (colorMap.get(vertex))
+		switch (colorMap.getColor(vertex))
 		case (white) { return true; }
 		else { return false; }
 	}
 
 	Boolean isBackEdge(V vertex) {
-		switch (colorMap.get(vertex))
+		switch (colorMap.getColor(vertex))
 		case (gray) { return true; }
 		else { return false; }
 	}

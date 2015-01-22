@@ -1,0 +1,36 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>CycleTests.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.test {
+	test,
+	assertEquals
+}
+
+import examples.cycle {
+	Cycle
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared class CycleTests() {
+
+	Cycle cycle = Cycle(10);
+
+	test
+	shared void shouldNotBeEmpty() {
+		assert(cycle.notEmpty);
+	}
+
+	test
+	shared void shouldHaveTenVertices() {
+		assertEquals(cycle.vertices.size, 10);
+	}
+
+	test
+	shared void shouldBeTraversedInOrder() {
+		assertEquals(cycle.bfsTraversal(0).vertices.sequence(), 0..9);
+		assertEquals(cycle.bfsTraversal(2).vertices.sequence(), (2..9).append(0..1));
+		assertEquals(cycle.bfsTraversal(9).vertices.sequence(), [9].append(0..8));
+	}
+}
+</pre></body></html>

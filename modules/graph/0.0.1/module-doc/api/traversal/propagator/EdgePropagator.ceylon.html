@@ -11,7 +11,7 @@ import graph.traversal.visitor {
 }
 
 by (&quot;ThorstenSeitz&quot;)
-shared class EdgePropagator&lt;V,E,G&gt;(G graph, EdgeVisitor&lt;V,E&gt; visitor, V source) extends Propagator&lt;V,E&gt;(visitor, source)
+shared class EdgePropagator&lt;V,E,G&gt;(G graph, EdgeVisitor&lt;V,E&gt; visitor, V source) extends GraphPropagator&lt;V,E&gt;(visitor, source)
 		given V satisfies Object
 		given E satisfies Edge&lt;V,E&gt;
 		given G satisfies IncidenceGraph&lt;V,E&gt; {

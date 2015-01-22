@@ -1,0 +1,97 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>Cycle.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	SimpleGraph
+}
+import graph.directed {
+	DirectedEdge,
+	DirectedGraph
+}
+import graph.traversal {
+	GenericVertexTraversal=VertexTraversal
+}
+import graph.traversal.iterator {
+	BfsIterator,
+	GenericVertexIterator=VertexIterator,
+	GenericEdgeIterator=EdgeIterator
+}
+import graph.traversal.propagator {
+	GenericVertexPropagator=VertexPropagator,
+	GenericEdgePropagator=EdgePropagator
+}
+import graph.traversal.visitor {
+	GenericVertexVisitor=VertexVisitor,
+	genericNullVertexVisitor=nullVertexVisitor,
+	GenericEdgeVisitor=EdgeVisitor,
+	genericNullEdgeVisitor=nullEdgeVisitor
+}
+
+&quot;Simple directed graph forming a cycle of `n` vertices.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &amp; DirectedGraph&lt;Integer,Link&gt; {
+
+	&quot;Directed edge within a [[Cycle]].&quot;
+	shared final class Link(shared actual Integer source, shared actual Integer target)
+			satisfies DirectedEdge&lt;Integer,Link&gt; {
+
+		shared actual Link self =&gt; this;
+		shared actual Link reversed =&gt; Link(target, source);
+	}
+
+	shared actual Link? edgeConnecting(Integer source, Integer target) =&gt; target == (source + 1) % n then Link(source, target) else null;
+
+	shared actual {Integer*} neighbors(Integer vertex) =&gt; { (vertex + 1) % n };
+
+	shared actual {Integer*} vertices =&gt; 0 .. n - 1;
+
+	// Convenient type aliases eliminating generic parameters
+
+	shared interface VertexVisitor =&gt; GenericVertexVisitor&lt;Integer&gt;;
+	shared interface EdgeVisitor =&gt; GenericEdgeVisitor&lt;Integer,Link&gt;;
+
+	shared alias VertexPropagator =&gt; GenericVertexPropagator&lt;Integer,Cycle&gt;;
+	shared alias EdgePropagator =&gt; GenericEdgePropagator&lt;Integer,Link,Cycle&gt;;
+
+	shared interface VertexIterator =&gt; GenericVertexIterator&lt;Integer,Cycle&gt;;
+	shared interface EdgeIterator =&gt; GenericEdgeIterator&lt;Integer,Cycle.Link,Cycle&gt;;
+
+	shared interface VertexTraversal =&gt; GenericVertexTraversal&lt;Integer,Cycle&gt;;
+
+	shared VertexVisitor nullVertexVisitor = genericNullVertexVisitor&lt;Integer&gt;();
+	shared EdgeVisitor nullEdgeVisitor = genericNullEdgeVisitor&lt;Integer,Link&gt;();
+
+	// BFS traversal for Cycle
+
+	&quot;Breadth first traversal of the receiver using a [[VertexPropagator]].&quot;
+	shared VertexTraversal bfsTraversal(
+		Integer start,
+		VertexVisitor visitor = nullVertexVisitor) =&gt; BfsTraversal(this, start, visitor);
+
+	&quot;Breadth first traversal of a [[Cycle]] using a [[VertexPropagator]].&quot;
+	class BfsTraversal(
+		shared actual Cycle graph,
+		shared actual Integer start,
+		shared actual VertexVisitor visitor)
+			satisfies VertexTraversal {
+
+		class BFS(Cycle graph, Integer start, VertexVisitor visitor)
+				extends BfsIterator&lt;Integer,Cycle,Integer,VertexPropagator,VertexVisitor&gt;(graph, visitor)
+				satisfies VertexIterator {}
+
+		shared actual VertexIterator graphIterator(
+			Cycle graph,
+			Integer start,
+			VertexVisitor visitor) =&gt; BFS(graph, start, visitor);
+	}
+}
+
+&quot;Example: Create cycle with 10 vertices, then get vertices from bfs traversals.&quot;
+shared void example() {
+	Cycle graph = Cycle(10);
+
+	{Integer*} bfs = graph.bfsTraversal(0).vertices;
+	print(&quot;bfs = ``bfs``&quot;);
+}
+</pre></body></html>

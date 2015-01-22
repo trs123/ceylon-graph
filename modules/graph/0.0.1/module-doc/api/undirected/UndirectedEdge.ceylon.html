@@ -6,12 +6,22 @@
 	Edge
 }
 
-by(&quot;ThorstenSeitz&quot;)
-shared interface UndirectedEdge&lt;Vertex, E&gt; of E satisfies Edge&lt;Vertex, E&gt;
-		given Vertex satisfies Object {
+by (&quot;ThorstenSeitz&quot;)
+shared interface UndirectedEdge&lt;Vertex,E&gt; of E satisfies Edge&lt;Vertex,E&gt;
+		given Vertex satisfies Object
+		given E satisfies UndirectedEdge&lt;Vertex,E&gt; {
 
 	shared actual Boolean isDirected =&gt; false;
 
 	shared actual Boolean isIncident(Object vertex) =&gt; source == vertex || target == vertex;
+
+	shared default E asOutgoing(Object vertex) {
+		if (source == vertex) {
+			return self;
+		} else {
+			assert (target == vertex);
+			return reversed;
+		}
+	}
 }
 </pre></body></html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>GraphPropagator.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph.traversal.visitor {
+	GraphVisitor
+}
+
+&quot;A [[GraphPropagator]] defines how a graph traversal propagates to adjacent vertices of a given vertex.
+ It abstracts from whether the adjacent vertices are reached as [[neighbors|graph::AdjacencyGraph.neighbors]]
+ of an [[graph::AdjacencyGraph]] or as targets of [[adjacent edges|graph::IncidenceGraph.adjacentEdges]]
+ of an [[graph::IncidenceGraph]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared abstract class GraphPropagator&lt;Vertex,Adjacency&gt;(GraphVisitor&lt;Vertex&gt; visitor, Vertex source)
+		given Vertex satisfies Object {
+
+	&quot;Answer the adjacencies allowing access to the neighboring vertices.&quot;
+	shared formal {Adjacency*} adjacencies;
+
+	&quot;Answer the target vertex reached by an adjacency.&quot;
+	shared formal Vertex target(Adjacency adjacency);
+
+	&quot;Calls visitor.examineVertex(source).&quot;
+	shared default void examineVertex() =&gt; visitor.examineVertex(source);
+
+	&quot;Calls visitor.discoverVertex(source).&quot;
+	shared default void discoverVertex() =&gt; visitor.discoverVertex(source);
+
+	&quot;Calls visitor.finishVertex(source).&quot;
+	shared default void finishVertex() =&gt; visitor.finishVertex(source);
+
+	&quot;Calls visitor.examineEdge according to the approprate signature of the visitor&apos;s method.&quot;
+	shared formal void examineEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.treeEdge according to the approprate signature of the visitor&apos;s method.&quot;
+	shared formal void treeEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.nonTreeEdge according to the approprate signature of the visitor&apos;s method.&quot;
+	shared formal void nonTreeEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.backEdge according to the approprate signature of the visitor&apos;s method.&quot;
+	shared formal void backEdge(Adjacency adjacency);
+
+	&quot;Calls visitor.forwardEdge according to the approprate signature of the visitor&apos;s method.&quot;
+	shared formal void forwardEdge(Adjacency adjacency);
+}
+
+shared abstract class PropagatorFactory&lt;Vertex,Adjacency,P&gt;(GraphVisitor&lt;Vertex&gt; visitor)
+		given Vertex satisfies Object
+		given P satisfies GraphPropagator&lt;Vertex,Adjacency&gt; {
+
+	shared formal P propagator(Vertex source);
+}
+</pre></body></html>
