@@ -14,7 +14,6 @@ var index = [
 {'name': 'EdgePropagatorTests.shouldOrientEdgesOutwards', 'type': 'function', 'url': 'EdgePropagatorTests.type.html#shouldOrientEdgesOutwards', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'EdgePropagatorTests.shouldOrientEdgesOutwards2', 'type': 'function', 'url': 'EdgePropagatorTests.type.html#shouldOrientEdgesOutwards2', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'EdgePropagatorTests', 'type': 'class', 'url': 'EdgePropagatorTests.type.html', 'doc': '', 'tags': [],'icons': ['icon-class']},
-{'name': 'run', 'type': 'function', 'url': 'index.html#run', 'doc': '<p>Run the module <code>graph.tests</code>.</p>\n', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'tests.graph', 'type': 'module', 'url': 'index.html', 'doc': '', 'tags': [],'icons': []}];
 var tagIndex = [
 ];
