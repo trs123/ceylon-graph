@@ -14,24 +14,23 @@ import graph.traversal {
 	BfsTraversal
 }
 
-shared interface DistanceMap&lt;V&gt;
-		given V satisfies Object =&gt; Map&lt;V,Integer&gt;;
+&quot;Distance map of vertices from a given origin.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared interface DistanceMap&lt;V&gt; satisfies Map&lt;V,Integer&gt;
+		given V satisfies Object {
+	&quot;The origin node from which the distances are measured.&quot;
+	shared formal V origin;
+}
 
 &quot;A `DistanceMapper` memorizes the distance of each visited vertex from the vertex which has been visited first
  (called the origin). The distance of a vertex is the least number of edges connecting the origin with that vertex
  as encountered during the traversal.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared class DistanceMapper&lt;V&gt;() satisfies VertexVisitor&lt;V&gt;
+shared class DistanceMapper&lt;V&gt;(V origin) satisfies VertexVisitor&lt;V&gt;
 		given V satisfies Object {
 
 	MutableMap&lt;V,Integer&gt; hops = HashMap&lt;V,Integer&gt;();
-
-	&quot;The first examined vertex becomes the origin of the distance map, i.e. has hops = 0.&quot;
-	shared actual void examineVertex(V vertex) {
-		if (hops.empty) {
-			hops.put(vertex, 0);
-		}
-	}
+	hops.put(origin, 0);
 
 	&quot;Update hops for target of edge based on hops of source of edge.&quot;
 	shared actual void examineEdge(V source, V target) {
@@ -51,8 +50,14 @@ shared class DistanceMapper&lt;V&gt;() satisfies VertexVisitor&lt;V&gt;
 	}
 
 	&quot;Answer a clone of the current [[distance map|DistanceMap]]. This may not be complete or correct yet, if
-	    the traversal has not been completed.&quot;
-	shared DistanceMap&lt;V&gt; distanceMap =&gt; hops.clone();
+	 the traversal has not been completed.&quot;
+	shared DistanceMap&lt;V&gt; distanceMap {
+		object distanceMap extends HashMap&lt;V,Integer&gt;() satisfies DistanceMap&lt;V&gt; {
+			shared actual V origin =&gt; outer.origin;
+		}
+		distanceMap.putAll(hops);
+		return distanceMap;
+	}
 }
 
 &quot;Map distances of all vertices of the given graph measured from given origin.
@@ -62,7 +67,7 @@ shared DistanceMap&lt;V&gt; mapDistances&lt;V,G&gt;(G graph, V origin)
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt; {
 
-	DistanceMapper&lt;V&gt; distanceMapper = DistanceMapper&lt;V&gt;();
+	DistanceMapper&lt;V&gt; distanceMapper = DistanceMapper&lt;V&gt;(origin);
 	BfsTraversal&lt;V,G&gt;(graph, origin, distanceMapper).traverse();
 	return distanceMapper.distanceMap;
 }
