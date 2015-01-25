@@ -6,10 +6,11 @@ import graph.directed {
 	DirectedGraph
 }
 import graph.traversal {
-	GenericVertexTraversal=VertexTraversal
+	GenericVertexTraversal=VertexTraversal,
+	BfsTraversal
 }
 import graph.traversal.iterator {
-	BfsIterator,
+	GenericBfsIterator=BfsIterator,
 	GenericVertexIterator=VertexIterator,
 	GenericEdgeIterator=EdgeIterator
 }
@@ -48,6 +49,7 @@ shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & Direct
 
 	shared alias VertexPropagator => GenericVertexPropagator<Integer,Cycle>;
 	shared alias EdgePropagator => GenericEdgePropagator<Integer,Link,Cycle>;
+	shared abstract class BfsIterator() => GenericBfsIterator<Integer,Cycle,Integer,VertexPropagator,VertexVisitor>();
 
 	shared interface VertexIterator => GenericVertexIterator<Integer,Cycle>;
 	shared interface EdgeIterator => GenericEdgeIterator<Integer,Cycle.Link,Cycle>;
@@ -63,29 +65,4 @@ shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & Direct
 	shared VertexTraversal bfsTraversal(
 		Integer start,
 		VertexVisitor visitor = nullVertexVisitor) => BfsTraversal(this, start, visitor);
-
-	"Breadth first traversal of a [[Cycle]] using a [[VertexPropagator]]."
-	class BfsTraversal(
-		shared actual Cycle graph,
-		shared actual Integer start,
-		shared actual VertexVisitor visitor) satisfies VertexTraversal {
-
-		shared actual VertexIterator graphIterator() {
-			object bfs
-					extends BfsIterator<Integer,Cycle,Integer,VertexPropagator,VertexVisitor>()
-					satisfies VertexIterator {
-				shared actual Cycle graph => outer.graph;
-				shared actual GenericVertexVisitor<Integer> visitor => outer.visitor;
-			}
-			return bfs;
-		}
-	}
-}
-
-"Example: Create cycle with 10 vertices, then get vertices from bfs traversals."
-shared void example() {
-	Cycle graph = Cycle(10);
-
-	{Integer*} bfs = graph.bfsTraversal(0).vertices;
-	print("bfs = ``bfs``");
 }

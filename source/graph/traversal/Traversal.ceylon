@@ -22,16 +22,22 @@ shared interface GraphTraversal<V,G,Visitor>
 	shared formal G graph;
 	shared formal V start;
 	shared formal Visitor visitor;
-	shared formal GraphIterator<V,G,Visitor> graphIterator();
+	shared formal GraphIterator<V,G,Visitor> basicGraphIterator(); // TODO: should not be part of interface OR startWith() should be called automatically
 
 	shared actual Iterator<V> iterator() {
-		GraphIterator<V,G,Visitor> it = graphIterator();
+		GraphIterator<V,G,Visitor> it = basicGraphIterator();
 		it.startWith(start);
 		return it;
 	}
 
 	"Answer the vertices of the `graph` reached by this traversal starting by `start` in traversal order."
 	shared default {V*} vertices => this;
+
+	"Traverse all vertices according to this traversal."
+	shared void traverse() {
+		Iterator<V> it = iterator();
+		while (!is Finished item = it.next()) {}
+	}
 }
 
 by ("ThorstenSeitz")
