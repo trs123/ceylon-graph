@@ -12,34 +12,34 @@ import graph.traversal {
 
 "Distance map of vertices from a given origin."
 by ("ThorstenSeitz")
-shared interface DistanceMap<V> satisfies Map<V,Integer>
-		given V satisfies Object {
+shared interface DistanceMap<Vertex> satisfies Map<Vertex,Integer>
+		given Vertex satisfies Object {
 	"The origin node from which the distances are measured."
-	shared formal V origin;
+	shared formal Vertex origin;
 }
 
 "A `DistanceMapper` memorizes the distance of each visited vertex from the vertex which has been visited first
  (called the origin). The distance of a vertex is the least number of edges connecting the origin with that vertex
  as encountered during the traversal."
 by ("ThorstenSeitz")
-shared class DistanceMapper<V>(V origin) satisfies VertexVisitor<V>
-		given V satisfies Object {
+shared class DistanceMapper<Vertex>(Vertex origin) satisfies VertexVisitor<Vertex>
+		given Vertex satisfies Object {
 
-	MutableMap<V,Integer> hops = HashMap<V,Integer>();
+	MutableMap<Vertex,Integer> hops = HashMap<Vertex,Integer>();
 	hops.put(origin, 0);
 
 	"Update hops for target of edge based on hops of source of edge."
-	shared actual void examineEdge(V source, V target) {
+	shared actual void examineEdge(Vertex source, Vertex target) {
 		Integer? sourceHops = getHops(source);
 		assert (exists sourceHops);
 		updateHops(target, sourceHops + 1);
 	}
 
 	"Answer the distance of a vertex from the origin, i.e. the least number of edges connecting them."
-	Integer? getHops(V vertex) => hops.get(vertex);
+	Integer? getHops(Vertex vertex) => hops.get(vertex);
 
 	"Update hops for vertex with n if less than current value (or if no value is present yet)."
-	void updateHops(V vertex, Integer n) {
+	void updateHops(Vertex vertex, Integer n) {
 		if (getHops(vertex)?.largerThan(n) else true) {
 			hops.put(vertex, n);
 		}
@@ -47,9 +47,9 @@ shared class DistanceMapper<V>(V origin) satisfies VertexVisitor<V>
 
 	"Answer a clone of the current [[distance map|DistanceMap]]. This may not be complete or correct yet, if
 	 the traversal has not been completed."
-	shared DistanceMap<V> distanceMap {
-		object distanceMap extends HashMap<V,Integer>() satisfies DistanceMap<V> {
-			shared actual V origin => outer.origin;
+	shared DistanceMap<Vertex> distanceMap {
+		object distanceMap extends HashMap<Vertex,Integer>() satisfies DistanceMap<Vertex> {
+			shared actual Vertex origin => outer.origin;
 		}
 		distanceMap.putAll(hops);
 		return distanceMap;
