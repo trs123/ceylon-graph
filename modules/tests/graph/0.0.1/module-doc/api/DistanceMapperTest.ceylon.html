@@ -16,38 +16,36 @@ import examples.routemap {
 	City
 }
 
-import graph.traversal {
-	BfsTraversal
-}
 import graph.traversal.visitor {
-	DistanceMapper
+	DistanceMap,
+	mapDistances
 }
+
+&quot;Test [[graph.traversal.visitor::DistanceMapper]].&quot;
 by (&quot;ThorstenSeitz&quot;)
 shared class DistanceMapperTest() {
 
 	test
 	shared void testDistancesInCycle() {
 		Cycle graph = Cycle(10);
-		DistanceMapper&lt;Integer&gt; distanceMapper = DistanceMapper&lt;Integer&gt;();
-		graph.bfsTraversal(0, distanceMapper).traverse();
+		DistanceMap&lt;Integer&gt; distanceMap = mapDistances(graph, 0);
 		// The distance of each vertex from vertex 0 should match its value.
 		for (Integer i in 0..9) {
-			assertEquals(i, distanceMapper.getHops(i));
+			assertEquals(i, distanceMap.get(i));
 		}
 	}
 
 	test
 	shared void testDistancesInRouteMap() {
 		RouteMap routeMap = example.routeMap;
-		DistanceMapper&lt;City&gt; distanceMapper = DistanceMapper&lt;City&gt;();
-		BfsTraversal(routeMap, example.hamburg, distanceMapper).traverse();
+		DistanceMap&lt;City&gt; distanceMap = mapDistances(routeMap, example.hamburg);
 		for (city-&gt;distance in {
 			example.hamburg-&gt;0,
 			example.hannover-&gt;1,
 			example.berlin-&gt;1,
 			example.kassel-&gt;2,
 			example.leipzig-&gt;2 }) {
-			assertEquals(distance, distanceMapper.getHops(city));
+			assertEquals(distance, distanceMap.get(city));
 		}
 	}
 }
