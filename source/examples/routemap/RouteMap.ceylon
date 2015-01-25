@@ -45,7 +45,6 @@ shared final class Route(
 	shared Distance distance,
 	shared Period travelTime) satisfies UndirectedEdge<City,Route> {
 
-	shared actual Route self => this;
 	shared actual Route reversed => Route(name, target, source, distance, travelTime);
 }
 

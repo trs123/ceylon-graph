@@ -32,7 +32,6 @@ shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & Direct
 	shared final class Link(shared actual Integer source, shared actual Integer target)
 			satisfies DirectedEdge<Integer,Link> {
 
-		shared actual Link self => this;
 		shared actual Link reversed => Link(target, source);
 	}
 
