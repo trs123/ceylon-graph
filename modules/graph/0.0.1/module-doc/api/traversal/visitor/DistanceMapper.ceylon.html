@@ -63,12 +63,12 @@ shared class DistanceMapper&lt;Vertex&gt;(Vertex origin) satisfies VertexVisitor
 &quot;Map distances of all vertices of the given graph measured from given origin.
  Implementation note: uses a [[breadth first search traversal|BfsTraversal]].&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared DistanceMap&lt;V&gt; mapDistances&lt;V,G&gt;(G graph, V origin)
-		given V satisfies Object
-		given G satisfies AdjacencyGraph&lt;V&gt; {
+shared DistanceMap&lt;Vertex&gt; mapDistances&lt;Vertex,Graph&gt;(Graph graph, Vertex origin)
+		given Vertex satisfies Object
+		given Graph satisfies AdjacencyGraph&lt;Vertex&gt; {
 
-	DistanceMapper&lt;V&gt; distanceMapper = DistanceMapper&lt;V&gt;(origin);
-	BfsTraversal&lt;V,G&gt;(graph, origin, distanceMapper).traverse();
+	DistanceMapper&lt;Vertex&gt; distanceMapper = DistanceMapper&lt;Vertex&gt;(origin);
+	BfsTraversal&lt;Vertex,Graph&gt;(graph, origin, distanceMapper).traverse();
 	return distanceMapper.distanceMap;
 }
 </pre></body></html>
