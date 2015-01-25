@@ -16,34 +16,34 @@ import graph.traversal {
 
 &quot;Distance map of vertices from a given origin.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface DistanceMap&lt;V&gt; satisfies Map&lt;V,Integer&gt;
-		given V satisfies Object {
+shared interface DistanceMap&lt;Vertex&gt; satisfies Map&lt;Vertex,Integer&gt;
+		given Vertex satisfies Object {
 	&quot;The origin node from which the distances are measured.&quot;
-	shared formal V origin;
+	shared formal Vertex origin;
 }
 
 &quot;A `DistanceMapper` memorizes the distance of each visited vertex from the vertex which has been visited first
  (called the origin). The distance of a vertex is the least number of edges connecting the origin with that vertex
  as encountered during the traversal.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared class DistanceMapper&lt;V&gt;(V origin) satisfies VertexVisitor&lt;V&gt;
-		given V satisfies Object {
+shared class DistanceMapper&lt;Vertex&gt;(Vertex origin) satisfies VertexVisitor&lt;Vertex&gt;
+		given Vertex satisfies Object {
 
-	MutableMap&lt;V,Integer&gt; hops = HashMap&lt;V,Integer&gt;();
+	MutableMap&lt;Vertex,Integer&gt; hops = HashMap&lt;Vertex,Integer&gt;();
 	hops.put(origin, 0);
 
 	&quot;Update hops for target of edge based on hops of source of edge.&quot;
-	shared actual void examineEdge(V source, V target) {
+	shared actual void examineEdge(Vertex source, Vertex target) {
 		Integer? sourceHops = getHops(source);
 		assert (exists sourceHops);
 		updateHops(target, sourceHops + 1);
 	}
 
 	&quot;Answer the distance of a vertex from the origin, i.e. the least number of edges connecting them.&quot;
-	Integer? getHops(V vertex) =&gt; hops.get(vertex);
+	Integer? getHops(Vertex vertex) =&gt; hops.get(vertex);
 
 	&quot;Update hops for vertex with n if less than current value (or if no value is present yet).&quot;
-	void updateHops(V vertex, Integer n) {
+	void updateHops(Vertex vertex, Integer n) {
 		if (getHops(vertex)?.largerThan(n) else true) {
 			hops.put(vertex, n);
 		}
@@ -51,9 +51,9 @@ shared class DistanceMapper&lt;V&gt;(V origin) satisfies VertexVisitor&lt;V&gt;
 
 	&quot;Answer a clone of the current [[distance map|DistanceMap]]. This may not be complete or correct yet, if
 	 the traversal has not been completed.&quot;
-	shared DistanceMap&lt;V&gt; distanceMap {
-		object distanceMap extends HashMap&lt;V,Integer&gt;() satisfies DistanceMap&lt;V&gt; {
-			shared actual V origin =&gt; outer.origin;
+	shared DistanceMap&lt;Vertex&gt; distanceMap {
+		object distanceMap extends HashMap&lt;Vertex,Integer&gt;() satisfies DistanceMap&lt;Vertex&gt; {
+			shared actual Vertex origin =&gt; outer.origin;
 		}
 		distanceMap.putAll(hops);
 		return distanceMap;
