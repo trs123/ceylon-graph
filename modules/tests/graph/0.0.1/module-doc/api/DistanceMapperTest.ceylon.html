@@ -1,0 +1,54 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>DistanceMapperTest.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.test {
+	test,
+	assertEquals
+}
+
+import examples.cycle {
+	Cycle
+}
+import examples.routemap {
+	RouteMap,
+	example,
+	City
+}
+
+import graph.traversal {
+	BfsTraversal
+}
+import graph.traversal.visitor {
+	DistanceMapper
+}
+by (&quot;ThorstenSeitz&quot;)
+shared class DistanceMapperTest() {
+
+	test
+	shared void testDistancesInCycle() {
+		Cycle graph = Cycle(10);
+		DistanceMapper&lt;Integer&gt; distanceMapper = DistanceMapper&lt;Integer&gt;();
+		graph.bfsTraversal(0, distanceMapper).traverse();
+		// The distance of each vertex from vertex 0 should match its value.
+		for (Integer i in 0..9) {
+			assertEquals(i, distanceMapper.getHops(i));
+		}
+	}
+
+	test
+	shared void testDistancesInRouteMap() {
+		RouteMap routeMap = example.routeMap;
+		DistanceMapper&lt;City&gt; distanceMapper = DistanceMapper&lt;City&gt;();
+		BfsTraversal(routeMap, example.hamburg, distanceMapper).traverse();
+		for (city-&gt;distance in {
+			example.hamburg-&gt;0,
+			example.hannover-&gt;1,
+			example.berlin-&gt;1,
+			example.kassel-&gt;2,
+			example.leipzig-&gt;2 }) {
+			assertEquals(distance, distanceMapper.getHops(city));
+		}
+	}
+}
+</pre></body></html>

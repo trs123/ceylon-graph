@@ -10,10 +10,11 @@ import graph.directed {
 	DirectedGraph
 }
 import graph.traversal {
-	GenericVertexTraversal=VertexTraversal
+	GenericVertexTraversal=VertexTraversal,
+	BfsTraversal
 }
 import graph.traversal.iterator {
-	BfsIterator,
+	GenericBfsIterator=BfsIterator,
 	GenericVertexIterator=VertexIterator,
 	GenericEdgeIterator=EdgeIterator
 }
@@ -36,7 +37,6 @@ shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &a
 	shared final class Link(shared actual Integer source, shared actual Integer target)
 			satisfies DirectedEdge&lt;Integer,Link&gt; {
 
-		shared actual Link self =&gt; this;
 		shared actual Link reversed =&gt; Link(target, source);
 	}
 
@@ -53,6 +53,7 @@ shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &a
 
 	shared alias VertexPropagator =&gt; GenericVertexPropagator&lt;Integer,Cycle&gt;;
 	shared alias EdgePropagator =&gt; GenericEdgePropagator&lt;Integer,Link,Cycle&gt;;
+	shared abstract class BfsIterator() =&gt; GenericBfsIterator&lt;Integer,Cycle,Integer,VertexPropagator,VertexVisitor&gt;();
 
 	shared interface VertexIterator =&gt; GenericVertexIterator&lt;Integer,Cycle&gt;;
 	shared interface EdgeIterator =&gt; GenericEdgeIterator&lt;Integer,Cycle.Link,Cycle&gt;;
@@ -68,30 +69,5 @@ shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &a
 	shared VertexTraversal bfsTraversal(
 		Integer start,
 		VertexVisitor visitor = nullVertexVisitor) =&gt; BfsTraversal(this, start, visitor);
-
-	&quot;Breadth first traversal of a [[Cycle]] using a [[VertexPropagator]].&quot;
-	class BfsTraversal(
-		shared actual Cycle graph,
-		shared actual Integer start,
-		shared actual VertexVisitor visitor) satisfies VertexTraversal {
-
-		shared actual VertexIterator graphIterator() {
-			object bfs
-					extends BfsIterator&lt;Integer,Cycle,Integer,VertexPropagator,VertexVisitor&gt;()
-					satisfies VertexIterator {
-				shared actual Cycle graph =&gt; outer.graph;
-				shared actual GenericVertexVisitor&lt;Integer&gt; visitor =&gt; outer.visitor;
-			}
-			return bfs;
-		}
-	}
-}
-
-&quot;Example: Create cycle with 10 vertices, then get vertices from bfs traversals.&quot;
-shared void example() {
-	Cycle graph = Cycle(10);
-
-	{Integer*} bfs = graph.bfsTraversal(0).vertices;
-	print(&quot;bfs = ``bfs``&quot;);
 }
 </pre></body></html>

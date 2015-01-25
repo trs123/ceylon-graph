@@ -49,7 +49,6 @@ shared final class Route(
 	shared Distance distance,
 	shared Period travelTime) satisfies UndirectedEdge&lt;City,Route&gt; {
 
-	shared actual Route self =&gt; this;
 	shared actual Route reversed =&gt; Route(name, target, source, distance, travelTime);
 }
 

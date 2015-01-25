@@ -1,0 +1,44 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>DistanceMapper.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.collection {
+	HashMap,
+	MutableMap
+}
+by (&quot;ThorstenSeitz&quot;)
+shared class DistanceMapper&lt;V&gt;() satisfies VertexVisitor&lt;V&gt;
+		given V satisfies Object {
+
+	MutableMap&lt;V,Integer&gt; hops = HashMap&lt;V,Integer&gt;();
+
+	&quot;The first examined vertex is the origin of the distance map, i.e. has hops = 0.&quot;
+	shared actual void examineVertex(V vertex) {
+		if (hops.empty) {
+			hops.put(vertex, 0);
+		}
+	}
+
+
+	shared actual void examineEdge(V source, V target) {
+		Integer? sourceHops = hops.get(source);
+		assert (exists sourceHops);
+		update(target, sourceHops + 1);
+	}
+
+	&quot;Answer the distance of a vertex from the origin as least number of edges connecting them.&quot;
+	shared Integer? getHops(V vertex) =&gt; hops.get(vertex);
+
+	// TODO: improve
+	void update(V vertex, Integer n) {
+		Integer? current = hops.get(vertex);
+		if (exists current) {
+			if (n &lt; current) {
+				hops.put(vertex, n);
+			}
+		} else {
+			hops.put(vertex, n);
+		}
+	}
+}
+</pre></body></html>

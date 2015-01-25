@@ -28,7 +28,7 @@ shared interface Edge&lt;out Vertex,E&gt; of E
 		return endpoint == source then target else source;
 	}
 
-	shared formal E self;
+	shared E self =&gt; this of E;
 
 	shared formal E reversed;
 
