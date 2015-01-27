@@ -2,18 +2,36 @@
 <title>Weights.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
 <link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
-<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
-	Edge
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import common {
+	Monoid
 }
 
-&quot;[[Weights]] gives a mapping from [[Edge]]s to weights and a zero element to make [[Weight]] a monoid.&quot;
+&quot;[[Weights]] gives a mapping from edges to weights and a zero element to make [[Weight]] a monoid.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface Weights&lt;Weight, E&gt;
+shared interface Weights&lt;Weight,E&gt;
+		satisfies Monoid&lt;Weight,Weights&lt;Weight,E&gt;&gt;
 		given Weight satisfies Summable&lt;Weight&gt;
-		given E satisfies Edge&lt;Object, E&gt; {
+		given E satisfies Edge&lt;Object,E&gt; {
 
 	shared formal Weight weight(E edge);
-	shared formal Weight zero;
+}
 
+&quot;[[ImplicitEdgeWeights]] gives a mapping from vertex pairs to weights and a zero element
+ to make [[Weight]] a monoid.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared interface ImplicitEdgeWeights&lt;Vertex,Weight&gt;
+		satisfies Monoid&lt;Weight,ImplicitEdgeWeights&lt;Vertex,Weight&gt;&gt;
+		given Weight satisfies Summable&lt;Weight&gt; {
+
+	shared formal Weight weight(Vertex source, Vertex target);
+}
+
+&quot;Hops assigns an edge the weight of 1 and can therefore be used to count the number of edges, or &apos;hops&apos;.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class Hops&lt;E&gt;() satisfies Weights&lt;Integer,E&gt;
+		given E satisfies Edge&lt;Object,E&gt; {
+
+	shared actual Integer weight(E edge) =&gt; 1;
+	shared actual Integer zero = 0;
 }
 </pre></body></html>

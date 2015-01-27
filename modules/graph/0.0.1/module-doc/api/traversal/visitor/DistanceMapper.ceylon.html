@@ -7,18 +7,27 @@
 	MutableMap
 }
 
+import common {
+	Monoid
+}
+
 import graph {
-	AdjacencyGraph
+	Weights,
+	Edge,
+	IncidenceGraph,
+	AdjacencyGraph,
+	ImplicitEdgeWeights
 }
 import graph.traversal {
+	BfsEdgeTraversal,
 	BfsTraversal
 }
 
-&quot;Distance map of vertices from a given origin.&quot;
+&quot;Distance map giving the distance of vertices measured from a given origin according to some measure.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface DistanceMap&lt;Vertex&gt; satisfies Map&lt;Vertex,Integer&gt;
+shared interface DistanceMap&lt;Vertex,Distance&gt; satisfies Map&lt;Vertex,Distance&gt;
 		given Vertex satisfies Object {
-	&quot;The origin node from which the distances are measured.&quot;
+	&quot;The origin vertex from which the distances are measured.&quot;
 	shared formal Vertex origin;
 }
 
@@ -26,49 +35,130 @@ shared interface DistanceMap&lt;Vertex&gt; satisfies Map&lt;Vertex,Integer&gt;
  (called the origin). The distance of a vertex is the least number of edges connecting the origin with that vertex
  as encountered during the traversal.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared class DistanceMapper&lt;Vertex&gt;(Vertex origin) satisfies VertexVisitor&lt;Vertex&gt;
-		given Vertex satisfies Object {
+shared abstract class DistanceMapper&lt;Vertex,Distance,DistanceMonoid&gt;(
+	Vertex origin,
+	DistanceMonoid monoid)
+		satisfies GraphVisitor&lt;Vertex&gt;
+		given Vertex satisfies Object
+		given Distance satisfies Summable&lt;Distance&gt; &amp; Comparable&lt;Distance&gt;
+		given DistanceMonoid satisfies Monoid&lt;Distance,DistanceMonoid&gt; {
 
-	MutableMap&lt;Vertex,Integer&gt; hops = HashMap&lt;Vertex,Integer&gt;();
-	hops.put(origin, 0);
+	MutableMap&lt;Vertex,Distance&gt; distances = HashMap&lt;Vertex,Distance&gt;();
+	distances.put(origin, monoid.zero);
 
-	&quot;Update hops for target of edge based on hops of source of edge.&quot;
-	shared actual void examineEdge(Vertex source, Vertex target) {
-		Integer? sourceHops = getHops(source);
-		assert (exists sourceHops);
-		updateHops(target, sourceHops + 1);
+	&quot;Update distance of target based on distance of source.&quot;
+	shared void updateDistanceBetween(Vertex source, Vertex target, Distance delta) {
+		Distance? sourceDistance = getDistance(source);
+		assert (exists sourceDistance);
+		updateDistance(target, sourceDistance + delta);
 	}
 
 	&quot;Answer the distance of a vertex from the origin, i.e. the least number of edges connecting them.&quot;
-	Integer? getHops(Vertex vertex) =&gt; hops.get(vertex);
+	Distance? getDistance(Vertex vertex) =&gt; distances.get(vertex);
 
-	&quot;Update hops for vertex with n if less than current value (or if no value is present yet).&quot;
-	void updateHops(Vertex vertex, Integer n) {
-		if (getHops(vertex)?.largerThan(n) else true) {
-			hops.put(vertex, n);
+	&quot;Update distance of vertex with d if less than current value (or if no value is present yet).&quot;
+	void updateDistance(Vertex vertex, Distance d) {
+		if (getDistance(vertex)?.largerThan(d) else true) {
+			distances.put(vertex, d);
 		}
 	}
 
 	&quot;Answer a clone of the current [[distance map|DistanceMap]]. This may not be complete or correct yet, if
-	 the traversal has not been completed.&quot;
-	shared DistanceMap&lt;Vertex&gt; distanceMap {
-		object distanceMap extends HashMap&lt;Vertex,Integer&gt;() satisfies DistanceMap&lt;Vertex&gt; {
+	 the traversal which uses the distance mapper as visitor has not been completed.&quot;
+	shared DistanceMap&lt;Vertex,Distance&gt; distanceMap {
+		object distanceMap extends HashMap&lt;Vertex,Distance&gt;() satisfies DistanceMap&lt;Vertex,Distance&gt; {
 			shared actual Vertex origin =&gt; outer.origin;
 		}
-		distanceMap.putAll(hops);
+		distanceMap.putAll(distances);
 		return distanceMap;
 	}
 }
 
-&quot;Map distances of all vertices of the given graph measured from given origin.
+&quot;An edge-visiting [[distance mapper|DistanceMapper]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class EdgeDistanceMapper&lt;Vertex,E,Distance&gt;(
+	Vertex origin,
+	Weights&lt;Distance,E&gt; weights)
+		extends DistanceMapper&lt;Vertex,Distance,Weights&lt;Distance,E&gt;&gt;(origin, weights)
+		satisfies EdgeVisitor&lt;Vertex,E&gt;
+		given Vertex satisfies Object
+		given E satisfies Edge&lt;Vertex,E&gt;
+		given Distance satisfies Summable&lt;Distance&gt; &amp; Comparable&lt;Distance&gt; {
+
+	&quot;Update distance for target of edge based on distance of source of edge.&quot;
+	shared actual void examineEdge(E edge) {
+		updateDistanceBetween(edge.source, edge.target, weights.weight(edge));
+	}
+}
+
+&quot;Map distances of all vertices of the given graph measured from given origin according to `weights`.
+ Implementation note: uses a [[breadth first search edge traversal|BfsEdgeTraversal]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared DistanceMap&lt;Vertex,Weight&gt; mapDistances&lt;Vertex,E,Graph,Weight&gt;(
+	Graph graph,
+	Vertex origin,
+	Weights&lt;Weight,E&gt; weights)
+		given Vertex satisfies Object
+		given E satisfies Edge&lt;Vertex,E&gt;
+		given Graph satisfies IncidenceGraph&lt;Vertex,E&gt;
+		given Weight satisfies Summable&lt;Weight&gt; &amp; Comparable&lt;Weight&gt; {
+
+	EdgeDistanceMapper&lt;Vertex,E,Weight&gt; distanceMapper = EdgeDistanceMapper(origin, weights);
+	BfsEdgeTraversal&lt;Vertex,E,Graph&gt;(graph, origin, distanceMapper).traverse();
+	return distanceMapper.distanceMap;
+}
+
+&quot;A vertex-visiting [[distance mapper|DistanceMapper]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class VertexDistanceMapper&lt;Vertex,Weight&gt;(
+	Vertex origin,
+	ImplicitEdgeWeights&lt;Vertex,Weight&gt; weights)
+		extends DistanceMapper&lt;Vertex,Weight,ImplicitEdgeWeights&lt;Vertex,Weight&gt;&gt;(origin, weights)
+		satisfies VertexVisitor&lt;Vertex&gt;
+		given Vertex satisfies Object
+		given Weight satisfies Summable&lt;Weight&gt; &amp; Comparable&lt;Weight&gt; {
+
+	&quot;Update distance for target of implicit edge based on distance of source of edge.&quot;
+	shared actual void examineEdge(Vertex source, Vertex target) {
+		updateDistanceBetween(source, target, weights.weight(source, target));
+	}
+}
+
+&quot;A distance map for hops.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared interface HopDistanceMap&lt;Vertex&gt;
+		given Vertex satisfies Object =&gt; DistanceMap&lt;Vertex,Integer&gt;;
+
+&quot;A monoid for counting hops.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class Hops() satisfies Monoid&lt;Integer,Hops&gt; {
+	shared actual Integer zero =&gt; 0;
+}
+
+&quot;A vertex-visiting [[distance mapper|DistanceMapper]] which measures distance in hops, i.e. number of edges.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class HopDistanceMapper&lt;Vertex&gt;(
+	Vertex origin)
+		extends DistanceMapper&lt;Vertex,Integer,Hops&gt;(origin, Hops())
+		satisfies VertexVisitor&lt;Vertex&gt;
+		given Vertex satisfies Object {
+
+	&quot;Update distance for target of implicit edge based on distance of source of edge.&quot;
+	shared actual void examineEdge(Vertex source, Vertex target) {
+		updateDistanceBetween(source, target, 1);
+	}
+}
+
+&quot;Map hop distance of all vertices of the given graph measured from given origin.
  Implementation note: uses a [[breadth first search traversal|BfsTraversal]].&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared DistanceMap&lt;Vertex&gt; mapDistances&lt;Vertex,Graph&gt;(Graph graph, Vertex origin)
+shared HopDistanceMap&lt;Vertex&gt; mapHops&lt;Vertex,Graph&gt;(Graph graph, Vertex origin)
 		given Vertex satisfies Object
 		given Graph satisfies AdjacencyGraph&lt;Vertex&gt; {
 
-	DistanceMapper&lt;Vertex&gt; distanceMapper = DistanceMapper&lt;Vertex&gt;(origin);
+	HopDistanceMapper&lt;Vertex&gt; distanceMapper = HopDistanceMapper(origin);
 	BfsTraversal&lt;Vertex,Graph&gt;(graph, origin, distanceMapper).traverse();
 	return distanceMapper.distanceMap;
 }
+
 </pre></body></html>

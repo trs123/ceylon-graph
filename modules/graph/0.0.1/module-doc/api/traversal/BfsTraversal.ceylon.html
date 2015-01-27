@@ -3,17 +3,22 @@
 <link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
-	AdjacencyGraph
+	AdjacencyGraph,
+	Edge,
+	IncidenceGraph
 }
 import graph.traversal.iterator {
 	VertexIterator,
-	BfsIterator
+	BfsIterator,
+	EdgeIterator
 }
 import graph.traversal.propagator {
-	VertexPropagator
+	VertexPropagator,
+	EdgePropagator
 }
 import graph.traversal.visitor {
-	VertexVisitor
+	VertexVisitor,
+	EdgeVisitor
 }
 
 &quot;Breadth first traversal of an [[AdjacencyGraph]] using a [[VertexPropagator]].&quot;
@@ -31,6 +36,27 @@ shared class BfsTraversal&lt;V,G&gt;(
 				satisfies VertexIterator&lt;V,G&gt; {
 			shared actual G graph =&gt; outer.graph;
 			shared actual VertexVisitor&lt;V&gt; visitor =&gt; outer.visitor;
+		}
+		return bfs;
+	}
+}
+
+&quot;Breadth first traversal of an [[IncidenceGraph]] using an [[EdgePropagator]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class BfsEdgeTraversal&lt;V,E,G&gt;(
+	shared actual G graph,
+	shared actual V start,
+	shared actual EdgeVisitor&lt;V,E&gt; visitor) satisfies EdgeTraversal&lt;V,E,G&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt;
+		given G satisfies IncidenceGraph&lt;V,E&gt; {
+
+	shared actual EdgeIterator&lt;V,E,G&gt; basicGraphIterator() {
+		object bfs
+				extends BfsIterator&lt;V,G,E,EdgePropagator&lt;V,E,G&gt;,EdgeVisitor&lt;V,E&gt;&gt;()
+				satisfies EdgeIterator&lt;V,E,G&gt; {
+			shared actual G graph =&gt; outer.graph;
+			shared actual EdgeVisitor&lt;V,E&gt; visitor =&gt; outer.visitor;
 		}
 		return bfs;
 	}

@@ -13,12 +13,16 @@ import examples.cycle {
 import examples.routemap {
 	RouteMap,
 	example,
-	City
+	City,
+	Distance,
+	km
 }
 
 import graph.traversal.visitor {
-	DistanceMap,
-	mapDistances
+	mapDistances,
+	HopDistanceMap,
+	mapHops,
+	DistanceMap
 }
 
 &quot;Test [[graph.traversal.visitor::DistanceMapper]].&quot;
@@ -26,25 +30,39 @@ by (&quot;ThorstenSeitz&quot;)
 shared class DistanceMapperTest() {
 
 	test
-	shared void testDistancesInCycle() {
+	shared void testHopDistancesInCycle() {
 		Cycle graph = Cycle(10);
-		DistanceMap&lt;Integer&gt; distanceMap = mapDistances(graph, 0);
-		// The distance of each vertex from vertex 0 should match its value.
+		HopDistanceMap&lt;Integer&gt; distanceMap = mapHops&lt;Integer,Cycle&gt;(graph, 0);
+		// The hop distance of each vertex from vertex 0 should match its value.
 		for (Integer i in 0..9) {
 			assertEquals(i, distanceMap.get(i));
 		}
 	}
 
 	test
-	shared void testDistancesInRouteMap() {
+	shared void testHopDistancesInRouteMap() {
 		RouteMap routeMap = example.routeMap;
-		DistanceMap&lt;City&gt; distanceMap = mapDistances(routeMap, example.hamburg);
+		HopDistanceMap&lt;City&gt; distanceMap = mapHops(routeMap, example.hamburg);
 		for (city-&gt;distance in {
 			example.hamburg-&gt;0,
 			example.hannover-&gt;1,
 			example.berlin-&gt;1,
 			example.kassel-&gt;2,
 			example.leipzig-&gt;2 }) {
+			assertEquals(distance, distanceMap.get(city));
+		}
+	}
+
+	test
+	shared void testDistancesInRouteMap() {
+		RouteMap routeMap = example.routeMap;
+		DistanceMap&lt;City,Distance&gt; distanceMap = mapDistances(routeMap, example.hamburg, routeMap.distances);
+		for (city-&gt;distance in {
+			example.hamburg-&gt;km(0),
+			example.hannover-&gt;km(151),
+			example.berlin-&gt;km(288),
+			example.kassel-&gt;km(307),
+			example.leipzig-&gt;km(414) }) {
 			assertEquals(distance, distanceMap.get(city));
 		}
 	}
