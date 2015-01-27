@@ -26,8 +26,19 @@ shared Distance km(Integer kilometers, Integer meters = 0) => Distance(kilometer
 
 "Distance measured in km."
 by ("ThorstenSeitz")
-shared final class Distance(shared Integer meters) satisfies Summable<Distance> {
+shared final class Distance(shared Integer meters) satisfies Summable<Distance> & Comparable<Distance> {
 	shared actual Distance plus(Distance other) => Distance(meters + other.meters);
+	shared actual Comparison compare(Distance other) => meters.compare(other.meters);
+	shared actual Boolean equals(Object other) { // TODO: rewrite as if expression in next Ceylon version
+		if (is Distance other) {
+			return meters.equals(other.meters);
+		}
+		else {
+			return false;
+		}
+	}
+	shared actual Integer hash => meters.hash;
+	shared actual String string => "``meters`` m";
 }
 
 "A city."
@@ -94,7 +105,7 @@ shared object example {
 			Route("A24", hamburg, berlin, km(288), period(2, 54)),
 			Route("A9", berlin, leipzig, km(190), period(2, 11)),
 			Route("B2", berlin, leipzig, km(174), period(3, 31)),
-			Route("B79", hannover, leipzig, km(263), period(4,38)),
+			Route("B79", hannover, leipzig, km(263), period(4, 38)),
 			Route("A38", leipzig, kassel, km(254), period(2, 26)),
 			Route("A4", leipzig, kassel, km(287), period(3, 23)),
 			Route("B249", leipzig, kassel, km(258), period(4, 34)),

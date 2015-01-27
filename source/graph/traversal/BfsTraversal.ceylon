@@ -1,15 +1,20 @@
 import graph {
-	AdjacencyGraph
+	AdjacencyGraph,
+	Edge,
+	IncidenceGraph
 }
 import graph.traversal.iterator {
 	VertexIterator,
-	BfsIterator
+	BfsIterator,
+	EdgeIterator
 }
 import graph.traversal.propagator {
-	VertexPropagator
+	VertexPropagator,
+	EdgePropagator
 }
 import graph.traversal.visitor {
-	VertexVisitor
+	VertexVisitor,
+	EdgeVisitor
 }
 
 "Breadth first traversal of an [[AdjacencyGraph]] using a [[VertexPropagator]]."
@@ -27,6 +32,27 @@ shared class BfsTraversal<V,G>(
 				satisfies VertexIterator<V,G> {
 			shared actual G graph => outer.graph;
 			shared actual VertexVisitor<V> visitor => outer.visitor;
+		}
+		return bfs;
+	}
+}
+
+"Breadth first traversal of an [[IncidenceGraph]] using an [[EdgePropagator]]."
+by ("ThorstenSeitz")
+shared class BfsEdgeTraversal<V,E,G>(
+	shared actual G graph,
+	shared actual V start,
+	shared actual EdgeVisitor<V,E> visitor) satisfies EdgeTraversal<V,E,G>
+		given V satisfies Object
+		given E satisfies Edge<V,E>
+		given G satisfies IncidenceGraph<V,E> {
+
+	shared actual EdgeIterator<V,E,G> basicGraphIterator() {
+		object bfs
+				extends BfsIterator<V,G,E,EdgePropagator<V,E,G>,EdgeVisitor<V,E>>()
+				satisfies EdgeIterator<V,E,G> {
+			shared actual G graph => outer.graph;
+			shared actual EdgeVisitor<V,E> visitor => outer.visitor;
 		}
 		return bfs;
 	}
