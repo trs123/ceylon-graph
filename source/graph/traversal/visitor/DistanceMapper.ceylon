@@ -11,7 +11,8 @@ import graph {
 	Weights,
 	Edge,
 	IncidenceGraph,
-	AdjacencyGraph
+	AdjacencyGraph,
+	ImplicitEdgeWeights
 }
 import graph.traversal {
 	BfsEdgeTraversal,
@@ -101,6 +102,22 @@ shared DistanceMap<Vertex,Weight> mapDistances<Vertex,E,Graph,Weight>(
 	EdgeDistanceMapper<Vertex,E,Weight> distanceMapper = EdgeDistanceMapper(origin, weights);
 	BfsEdgeTraversal<Vertex,E,Graph>(graph, origin, distanceMapper).traverse();
 	return distanceMapper.distanceMap;
+}
+
+"A vertex-visiting [[distance mapper|DistanceMapper]]."
+by ("ThorstenSeitz")
+shared class VertexDistanceMapper<Vertex,Weight>(
+	Vertex origin,
+	ImplicitEdgeWeights<Vertex,Weight> weights)
+		extends DistanceMapper<Vertex,Weight,ImplicitEdgeWeights<Vertex,Weight>>(origin, weights)
+		satisfies VertexVisitor<Vertex>
+		given Vertex satisfies Object
+		given Weight satisfies Summable<Weight> & Comparable<Weight> {
+
+	"Update distance for target of implicit edge based on distance of source of edge."
+	shared actual void examineEdge(Vertex source, Vertex target) {
+		updateDistanceBetween(source, target, weights.weight(source, target));
+	}
 }
 
 "A distance map for hops."
