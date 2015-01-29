@@ -5,11 +5,11 @@ import graph {
 by ("ThorstenSeitz")
 shared interface UndirectedEdge<Vertex,E> of E satisfies Edge<Vertex,E>
 		given Vertex satisfies Object
-		given E satisfies UndirectedEdge<Vertex,E> {
+		given E satisfies Edge<Vertex,E> { // should be UndirectedEdge<Vertex,E> but clashes with definition of Edge
 
 	shared actual Boolean isDirected => false;
 
-	shared actual Boolean isIncident(Object vertex) => source == vertex || target == vertex;
+	shared actual Boolean isIncident(Vertex vertex) => source == vertex || target == vertex;
 
 	shared default E asOutgoing(Object vertex) {
 		if (source == vertex) {

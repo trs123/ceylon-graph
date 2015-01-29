@@ -13,7 +13,7 @@ import graph.traversal.propagator {
 	GraphPropagator
 }
 import graph.traversal.visitor {
-	GraphVisitor
+	TraversalVisitor
 }
 
 "Generic breadth first search traversal."
@@ -23,7 +23,7 @@ shared abstract class BfsIterator<V,G,Adjacency,P,Visitor>()
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
 		given P satisfies GraphPropagator<V,Adjacency>
-		given Visitor satisfies GraphVisitor<V> {
+		given Visitor satisfies TraversalVisitor<V> {
 
 	Queue<V> waiting = ArrayList<V>();
 

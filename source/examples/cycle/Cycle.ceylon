@@ -20,27 +20,36 @@ import graph.traversal.propagator {
 }
 import graph.traversal.visitor {
 	GenericVertexVisitor=VertexVisitor,
-	genericNullVertexVisitor=nullVertexVisitor,
 	GenericEdgeVisitor=EdgeVisitor,
-	genericNullEdgeVisitor=nullEdgeVisitor
+	traversalVisitors
 }
 
 "Simple directed graph forming a cycle of `n` vertices."
 by ("ThorstenSeitz")
-shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & DirectedGraph<Integer,Link> {
+shared class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & DirectedGraph<Integer,Link> {
 
 	"Directed edge within a [[Cycle]]."
 	shared final class Link(shared actual Integer source, shared actual Integer target)
 			satisfies DirectedEdge<Integer,Link> {
 
 		shared actual Link reversed => Link(target, source);
+
+		shared actual Boolean equals(Object other) {
+			if (is Link other) {
+				return other.source == source && other.target == target;
+			} else {
+				return false;
+			}
+		}
+
+		shared actual Integer hash => source.hash.xor(target.hash);
 	}
 
-	shared actual Link? edgeConnecting(Integer source, Integer target) => target == (source + 1) % n then Link(source, target) else null;
+	shared actual default Link? edgeConnecting(Integer source, Integer target) => target == (source + 1) % n then Link(source, target) else null;
 
-	shared actual {Integer*} neighbors(Integer vertex) => { (vertex + 1) % n };
+	shared actual default {Integer*} neighbors(Integer vertex) => { (vertex + 1) % n };
 
-	shared actual {Integer*} vertices => 0 .. n - 1;
+	shared actual default {Integer*} vertices => 0 .. n - 1;
 
 	// Convenient type aliases eliminating generic parameters
 
@@ -56,8 +65,8 @@ shared final class Cycle(Integer n) satisfies SimpleGraph<Integer,Link> & Direct
 
 	shared interface VertexTraversal => GenericVertexTraversal<Integer,Cycle>;
 
-	shared VertexVisitor nullVertexVisitor = genericNullVertexVisitor<Integer>();
-	shared EdgeVisitor nullEdgeVisitor = genericNullEdgeVisitor<Integer,Link>();
+	shared VertexVisitor nullVertexVisitor = traversalVisitors.nullVertexVisitor<Integer>();
+	shared EdgeVisitor nullEdgeVisitor = traversalVisitors.nullEdgeVisitor<Integer,Link>();
 
 	// BFS traversal for Cycle
 

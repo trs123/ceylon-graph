@@ -1,5 +1,5 @@
 import graph.traversal.visitor {
-	GraphVisitor
+	TraversalVisitor
 }
 
 "A [[GraphPropagator]] defines how a graph traversal propagates to adjacent vertices of a given vertex.
@@ -7,7 +7,7 @@ import graph.traversal.visitor {
  of an [[graph::AdjacencyGraph]] or as targets of [[adjacent edges|graph::IncidenceGraph.adjacentEdges]]
  of an [[graph::IncidenceGraph]]."
 by ("ThorstenSeitz")
-shared abstract class GraphPropagator<Vertex,Adjacency>(GraphVisitor<Vertex> visitor, Vertex source)
+shared abstract class GraphPropagator<Vertex,Adjacency>(TraversalVisitor<Vertex> visitor, Vertex source)
 		given Vertex satisfies Object {
 
 	"Answer the adjacencies allowing access to the neighboring vertices."
@@ -41,7 +41,7 @@ shared abstract class GraphPropagator<Vertex,Adjacency>(GraphVisitor<Vertex> vis
 	shared formal void forwardEdge(Adjacency adjacency);
 }
 
-shared abstract class PropagatorFactory<Vertex,Adjacency,P>(GraphVisitor<Vertex> visitor)
+shared abstract class PropagatorFactory<Vertex,Adjacency,P>(TraversalVisitor<Vertex> visitor)
 		given Vertex satisfies Object
 		given P satisfies GraphPropagator<Vertex,Adjacency> {
 

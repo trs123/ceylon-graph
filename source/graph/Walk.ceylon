@@ -1,8 +1,8 @@
 "A Walk is a possibly empty sequence of edges connecting two vertices."
-by("ThorstenSeitz")
+by ("ThorstenSeitz")
 shared interface Walk<V,E> satisfies Comparable<Walk<V,E>>
 		given V satisfies Object
-		given E satisfies Edge<V, E> {
+		given E satisfies Edge<V,E> {
 
 	"The edges comprising the walk."
 	shared formal {E*} edges;
@@ -10,7 +10,7 @@ shared interface Walk<V,E> satisfies Comparable<Walk<V,E>>
 	"The vertices touched by the walk."
 	shared {V*} vertices {
 		if (exists startpoint = edges.first?.source) {
-			return edges.map(Edge<V, E>.target).follow(startpoint);
+			return edges.map(Edge<V,E>.target).follow(startpoint);
 		} else {
 			return {};
 		}
@@ -28,7 +28,8 @@ shared interface Walk<V,E> satisfies Comparable<Walk<V,E>>
 	}
 
 	"The distance of a walk with recpect to the given [[Weights]]."
-	shared Weight distance<Weight>(Weights<Weight, E> weights) given Weight satisfies Summable<Weight> {
+	shared Weight distance<Weight>(Weights<Weight,V,E> weights)
+			given Weight satisfies Summable<Weight> {
 		return edges.map(weights.weight).fold(weights.zero)(plus<Weight>);
 	}
 

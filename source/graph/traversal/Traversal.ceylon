@@ -7,7 +7,7 @@ import graph.traversal.iterator {
 	GraphIterator
 }
 import graph.traversal.visitor {
-	GraphVisitor,
+	TraversalVisitor,
 	VertexVisitor,
 	EdgeVisitor
 }
@@ -17,7 +17,7 @@ shared interface GraphTraversal<V,G,Visitor>
 		satisfies Iterable<V>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
-		given Visitor satisfies GraphVisitor<V> {
+		given Visitor satisfies TraversalVisitor<V> {
 
 	shared formal G graph;
 	shared formal V start;

@@ -13,7 +13,7 @@ import graph.traversal.propagator {
 import graph.traversal.visitor {
 	VertexVisitor,
 	EdgeVisitor,
-	GraphVisitor
+	TraversalVisitor
 }
 
 by ("ThorstenSeitz")
@@ -21,7 +21,7 @@ shared interface GraphIterator<V,G,Visitor>
 		satisfies Iterator<V>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
-		given Visitor satisfies GraphVisitor<V> {
+		given Visitor satisfies TraversalVisitor<V> {
 
 	shared formal G graph;
 	shared formal Visitor visitor;
@@ -37,7 +37,7 @@ shared interface PropagatorBasedIterator<V,G,P,Adjacency,Visitor>
 		given V satisfies Object
 		given G satisfies AdjacencyGraph<V>
 		given P satisfies GraphPropagator<V,Adjacency>
-		given Visitor satisfies GraphVisitor<V> {
+		given Visitor satisfies TraversalVisitor<V> {
 
 	shared alias Propagator => GraphPropagator<V,Adjacency>;
 	shared formal P propagatorFor(V vertex);

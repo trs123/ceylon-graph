@@ -29,11 +29,11 @@ shared interface AdjacencyGraph<V>
 	shared formal {V*} vertices;
 
 	"All neighbor vertices of the given vertex. A neighbor is the target of an outgoing directed edge
-	 or the other endpoint of an undirected edge."
+	          or the other endpoint of an undirected edge."
 	shared formal {V*} neighbors(V vertex);
 
 	"Apply action for each neighbor of the given vertex.
-	 This method will (obviously) not return if the vertex has an inifinite number of neighbors."
+	          This method will (obviously) not return if the vertex has an inifinite number of neighbors."
 	shared void forEachNeighbor(V vertex, void action(V neighbor)) {
 		for (V neighbor in neighbors(vertex)) {
 			action(neighbor);
@@ -41,7 +41,7 @@ shared interface AdjacencyGraph<V>
 	}
 
 	"Answer the degree of the given vertex, i.e. the number of neighbors.
-	 This method will (obviously) not return if the vertex has inifinite neighbors."
+	          This method will (obviously) not return if the vertex has inifinite neighbors."
 	shared Integer degreeOf(V vertex) {
 		return neighbors(vertex).size;
 	}

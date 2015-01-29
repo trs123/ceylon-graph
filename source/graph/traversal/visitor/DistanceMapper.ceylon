@@ -34,7 +34,7 @@ by ("ThorstenSeitz")
 shared abstract class DistanceMapper<Vertex,Distance,DistanceMonoid>(
 	Vertex origin,
 	DistanceMonoid monoid)
-		satisfies GraphVisitor<Vertex>
+		satisfies TraversalVisitor<Vertex>
 		given Vertex satisfies Object
 		given Distance satisfies Summable<Distance> & Comparable<Distance>
 		given DistanceMonoid satisfies Monoid<Distance,DistanceMonoid> {
@@ -74,8 +74,8 @@ shared abstract class DistanceMapper<Vertex,Distance,DistanceMonoid>(
 by ("ThorstenSeitz")
 shared class EdgeDistanceMapper<Vertex,E,Distance>(
 	Vertex origin,
-	Weights<Distance,E> weights)
-		extends DistanceMapper<Vertex,Distance,Weights<Distance,E>>(origin, weights)
+	Weights<Distance,Vertex,E> weights)
+		extends DistanceMapper<Vertex,Distance,Weights<Distance,Vertex,E>>(origin, weights)
 		satisfies EdgeVisitor<Vertex,E>
 		given Vertex satisfies Object
 		given E satisfies Edge<Vertex,E>
@@ -93,7 +93,7 @@ by ("ThorstenSeitz")
 shared DistanceMap<Vertex,Weight> mapDistances<Vertex,E,Graph,Weight>(
 	Graph graph,
 	Vertex origin,
-	Weights<Weight,E> weights)
+	Weights<Weight,Vertex,E> weights)
 		given Vertex satisfies Object
 		given E satisfies Edge<Vertex,E>
 		given Graph satisfies IncidenceGraph<Vertex,E>
@@ -108,8 +108,8 @@ shared DistanceMap<Vertex,Weight> mapDistances<Vertex,E,Graph,Weight>(
 by ("ThorstenSeitz")
 shared class VertexDistanceMapper<Vertex,Weight>(
 	Vertex origin,
-	ImplicitEdgeWeights<Vertex,Weight> weights)
-		extends DistanceMapper<Vertex,Weight,ImplicitEdgeWeights<Vertex,Weight>>(origin, weights)
+	ImplicitEdgeWeights<Weight,Vertex> weights)
+		extends DistanceMapper<Vertex,Weight,ImplicitEdgeWeights<Weight,Vertex>>(origin, weights)
 		satisfies VertexVisitor<Vertex>
 		given Vertex satisfies Object
 		given Weight satisfies Summable<Weight> & Comparable<Weight> {
