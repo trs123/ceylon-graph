@@ -9,11 +9,11 @@
 by (&quot;ThorstenSeitz&quot;)
 shared interface UndirectedEdge&lt;Vertex,E&gt; of E satisfies Edge&lt;Vertex,E&gt;
 		given Vertex satisfies Object
-		given E satisfies UndirectedEdge&lt;Vertex,E&gt; {
+		given E satisfies Edge&lt;Vertex,E&gt; { // should be UndirectedEdge&lt;Vertex,E&gt; but clashes with definition of Edge
 
 	shared actual Boolean isDirected =&gt; false;
 
-	shared actual Boolean isIncident(Object vertex) =&gt; source == vertex || target == vertex;
+	shared actual Boolean isIncident(Vertex vertex) =&gt; source == vertex || target == vertex;
 
 	shared default E asOutgoing(Object vertex) {
 		if (source == vertex) {

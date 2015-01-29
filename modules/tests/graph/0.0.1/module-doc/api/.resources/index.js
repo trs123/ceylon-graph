@@ -12,6 +12,8 @@ var index = [
 {'name': 'DistanceMapperTest.testHopDistancesInRouteMap', 'type': 'function', 'url': 'DistanceMapperTest.type.html#testHopDistancesInRouteMap', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'DistanceMapperTest.testDistancesInRouteMap', 'type': 'function', 'url': 'DistanceMapperTest.type.html#testDistancesInRouteMap', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'DistanceMapperTest', 'type': 'class', 'url': 'DistanceMapperTest.type.html', 'doc': '<p>Test <code><span title=\'graph.traversal.visitor::DistanceMapper\'><span class=\'type-identifier\'>DistanceMapper</span></span></code>.</p>\n', 'tags': [],'icons': ['icon-class']},
+{'name': 'FilterableGraphTest.filteredCycle', 'type': 'function', 'url': 'FilterableGraphTest.type.html#filteredCycle', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
+{'name': 'FilterableGraphTest', 'type': 'class', 'url': 'FilterableGraphTest.type.html', 'doc': '', 'tags': [],'icons': ['icon-class']},
 {'name': 'VertexPropagatorTests.shouldPropagateToNeighbors', 'type': 'function', 'url': 'VertexPropagatorTests.type.html#shouldPropagateToNeighbors', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'VertexPropagatorTests', 'type': 'class', 'url': 'VertexPropagatorTests.type.html', 'doc': '', 'tags': [],'icons': ['icon-class']},
 {'name': 'EdgePropagatorTests.shouldPropagateViaEdges', 'type': 'function', 'url': 'EdgePropagatorTests.type.html#shouldPropagateViaEdges', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},

@@ -38,7 +38,7 @@ by (&quot;ThorstenSeitz&quot;)
 shared abstract class DistanceMapper&lt;Vertex,Distance,DistanceMonoid&gt;(
 	Vertex origin,
 	DistanceMonoid monoid)
-		satisfies GraphVisitor&lt;Vertex&gt;
+		satisfies TraversalVisitor&lt;Vertex&gt;
 		given Vertex satisfies Object
 		given Distance satisfies Summable&lt;Distance&gt; &amp; Comparable&lt;Distance&gt;
 		given DistanceMonoid satisfies Monoid&lt;Distance,DistanceMonoid&gt; {
@@ -78,8 +78,8 @@ shared abstract class DistanceMapper&lt;Vertex,Distance,DistanceMonoid&gt;(
 by (&quot;ThorstenSeitz&quot;)
 shared class EdgeDistanceMapper&lt;Vertex,E,Distance&gt;(
 	Vertex origin,
-	Weights&lt;Distance,E&gt; weights)
-		extends DistanceMapper&lt;Vertex,Distance,Weights&lt;Distance,E&gt;&gt;(origin, weights)
+	Weights&lt;Distance,Vertex,E&gt; weights)
+		extends DistanceMapper&lt;Vertex,Distance,Weights&lt;Distance,Vertex,E&gt;&gt;(origin, weights)
 		satisfies EdgeVisitor&lt;Vertex,E&gt;
 		given Vertex satisfies Object
 		given E satisfies Edge&lt;Vertex,E&gt;
@@ -97,7 +97,7 @@ by (&quot;ThorstenSeitz&quot;)
 shared DistanceMap&lt;Vertex,Weight&gt; mapDistances&lt;Vertex,E,Graph,Weight&gt;(
 	Graph graph,
 	Vertex origin,
-	Weights&lt;Weight,E&gt; weights)
+	Weights&lt;Weight,Vertex,E&gt; weights)
 		given Vertex satisfies Object
 		given E satisfies Edge&lt;Vertex,E&gt;
 		given Graph satisfies IncidenceGraph&lt;Vertex,E&gt;
@@ -112,8 +112,8 @@ shared DistanceMap&lt;Vertex,Weight&gt; mapDistances&lt;Vertex,E,Graph,Weight&gt
 by (&quot;ThorstenSeitz&quot;)
 shared class VertexDistanceMapper&lt;Vertex,Weight&gt;(
 	Vertex origin,
-	ImplicitEdgeWeights&lt;Vertex,Weight&gt; weights)
-		extends DistanceMapper&lt;Vertex,Weight,ImplicitEdgeWeights&lt;Vertex,Weight&gt;&gt;(origin, weights)
+	ImplicitEdgeWeights&lt;Weight,Vertex&gt; weights)
+		extends DistanceMapper&lt;Vertex,Weight,ImplicitEdgeWeights&lt;Weight,Vertex&gt;&gt;(origin, weights)
 		satisfies VertexVisitor&lt;Vertex&gt;
 		given Vertex satisfies Object
 		given Weight satisfies Summable&lt;Weight&gt; &amp; Comparable&lt;Weight&gt; {

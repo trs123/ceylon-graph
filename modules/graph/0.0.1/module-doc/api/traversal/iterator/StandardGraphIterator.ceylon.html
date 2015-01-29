@@ -12,7 +12,7 @@ import graph.traversal.propagator {
 	GraphPropagator
 }
 import graph.traversal.visitor {
-	GraphVisitor
+	TraversalVisitor
 }
 
 &quot;Generic traversal by using white/gray/black vertex colors and a collection of vertices waiting to be visited.
@@ -23,7 +23,7 @@ shared abstract class StandardGraphIterator&lt;V,G,Adjacency,P,Visitor&gt;()
 		given V satisfies Object
 		given G satisfies AdjacencyGraph&lt;V&gt;
 		given P satisfies GraphPropagator&lt;V,Adjacency&gt;
-		given Visitor satisfies GraphVisitor&lt;V&gt; {
+		given Visitor satisfies TraversalVisitor&lt;V&gt; {
 
 	ColorMap&lt;V&gt; colorMap = ColorMap&lt;V&gt;();
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>FilterableGraphTest.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.test {
+	test,
+	assertEquals
+}
+
+import examples.cycle {
+	Cycle
+}
+
+import graph.filter {
+	FilterableAdjacencyGraph
+}
+
+by (&quot;ThorstenSeitz&quot;)
+shared class FilterableGraphTest() {
+
+	test
+	shared void filteredCycle() {
+		class FCycle(Integer n)
+				extends Cycle(n)
+				satisfies FilterableAdjacencyGraph&lt;Integer,FCycle&gt; {
+
+			shared actual FCycle filterVertices(Boolean predicate(Integer vertex)) {
+				object filteredGraph extends FCycle(outer.n) {
+					shared actual {Integer*} vertices =&gt; outer.vertices.filter(predicate);
+					shared actual {Integer*} neighbors(Integer vertex) =&gt; outer.neighbors(vertex).filter(predicate);
+					shared actual Link? edgeConnecting(Integer source, Integer target) {
+						if (predicate(source) &amp;&amp; predicate(target)) {
+							return outer.edgeConnecting(source, target);
+						} else {
+							return null;
+						}
+					}
+				}
+				return filteredGraph;
+			}
+		}
+		FCycle cycle = FCycle(10);
+		FCycle filteredCycle = cycle.filterVertices((Integer vertex) =&gt; vertex &lt; 5);
+		// check vertices
+		assertEquals(filteredCycle.vertices.sequence(), [0,1,2,3,4]);
+		// check neighbors
+		assertEquals(filteredCycle.neighbors(0).sequence(), [1]);
+		assertEquals(filteredCycle.neighbors(1).sequence(), [2]);
+		assertEquals(filteredCycle.neighbors(2).sequence(), [3]);
+		assertEquals(filteredCycle.neighbors(3).sequence(), [4]);
+		assertEquals(filteredCycle.neighbors(4).sequence(), []);
+		// check edges
+		assertEquals(filteredCycle.edgeConnecting(9,0), null);
+		assertEquals(filteredCycle.edgeConnecting(0,1), filteredCycle.Link(0,1));
+		assertEquals(filteredCycle.edgeConnecting(4,5), null);
+	}
+}
+</pre></body></html>

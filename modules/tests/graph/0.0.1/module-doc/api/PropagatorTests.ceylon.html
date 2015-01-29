@@ -25,17 +25,16 @@ import graph.traversal.propagator {
 	EdgePropagator
 }
 import graph.traversal.visitor {
-	nullVertexVisitor,
 	VertexVisitor,
-	nullEdgeVisitor,
-	EdgeVisitor
+	EdgeVisitor,
+	traversalVisitors
 }
 
 by (&quot;ThorstenSeitz&quot;)
 shared class VertexPropagatorTests() {
 
 	Cycle cycle = Cycle(10);
-	VertexVisitor&lt;Integer&gt; visitor = nullVertexVisitor&lt;Integer&gt;();
+	VertexVisitor&lt;Integer&gt; visitor = traversalVisitors.nullVertexVisitor&lt;Integer&gt;();
 	VertexPropagatorFactory&lt;Integer,Cycle&gt; vertexPropagatorFactory = VertexPropagatorFactory&lt;Integer,Cycle&gt;(cycle, visitor);
 
 	test
@@ -49,7 +48,7 @@ by (&quot;ThorstenSeitz&quot;)
 shared class EdgePropagatorTests() {
 
 	RouteMap routeMap = example.routeMap;
-	EdgeVisitor&lt;City,Route&gt; visitor = nullEdgeVisitor&lt;City,Route&gt;();
+	EdgeVisitor&lt;City,Route&gt; visitor = traversalVisitors.nullEdgeVisitor&lt;City,Route&gt;();
 	EdgePropagatorFactory&lt;City,Route,RouteMap&gt; edgePropagatorFactory = EdgePropagatorFactory&lt;City,Route,RouteMap&gt;(routeMap, visitor);
 
 	test

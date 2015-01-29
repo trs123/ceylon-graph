@@ -1,21 +1,24 @@
 <!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
-<title>GraphVisitor.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
+<title>TraversalVisitor.ceylon</title><link href='../../.resources/favicon.ico' rel='shortcut icon'/>
 <link href='../../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../../.resources/'</script><script src='../../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../../.resources/rainbow.min.js' type='text/javascript'></script><script src='../../.resources/ceylon.js' type='text/javascript'></script><script src='../../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
 	Edge
 }
 
+&quot;A `TraversalVisitor` is called during a [[graph.traversal::GraphTraversal]] when encountering vertices.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface GraphVisitor&lt;V&gt; {
+shared interface TraversalVisitor&lt;V&gt; {
 
 	shared default void examineVertex(V vertex) {}
 	shared default void discoverVertex(V vertex) {}
 	shared default void finishVertex(V vertex) {}
 }
 
+// TODO: rename to AdjacencyVisitor?
+&quot;A `VertexVisitor` is a [[TraversalVisitor]] with additional callbacks when encountering neighbors.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface VertexVisitor&lt;V&gt; satisfies GraphVisitor&lt;V&gt;
+shared interface VertexVisitor&lt;V&gt; satisfies TraversalVisitor&lt;V&gt;
 		given V satisfies Object {
 
 	shared default void examineEdge(V source, V target) {}
@@ -25,8 +28,10 @@ shared interface VertexVisitor&lt;V&gt; satisfies GraphVisitor&lt;V&gt;
 	shared default void forwardEdge(V source, V target) {}
 }
 
+// TODO: rename to IncidenceVisitor?
+&quot;An `EdgeVisitor` is a [[TraversalVisitor]] with additional callbacks when encountering out-edges.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface EdgeVisitor&lt;V,E&gt; satisfies GraphVisitor&lt;V&gt;
+shared interface EdgeVisitor&lt;V,E&gt; satisfies TraversalVisitor&lt;V&gt;
 		given V satisfies Object
 		given E satisfies Edge&lt;V,E&gt; {
 
@@ -37,18 +42,26 @@ shared interface EdgeVisitor&lt;V,E&gt; satisfies GraphVisitor&lt;V&gt;
 	shared default void forwardEdge(E edge) {}
 }
 
+&quot;This object contains some useful visitors. Note that wrapping them into a parent object is only necessary
+ to avoid a compiler backend type inference error.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared VertexVisitor&lt;V&gt; nullVertexVisitor&lt;V&gt;()
-		given V satisfies Object {
-	object nullVisitor satisfies VertexVisitor&lt;V&gt; {}
-	return nullVisitor;
-}
+shared object traversalVisitors {
 
-by (&quot;ThorstenSeitz&quot;)
-shared EdgeVisitor&lt;V,E&gt; nullEdgeVisitor&lt;V,E&gt;()
-		given V satisfies Object
-		given E satisfies Edge&lt;V,E&gt; {
-	object nullVisitor satisfies EdgeVisitor&lt;V,E&gt; {}
-	return nullVisitor;
+	&quot;Empty vertex visitor doing nothing.&quot;
+	by (&quot;ThorstenSeitz&quot;)
+	shared VertexVisitor&lt;V&gt; nullVertexVisitor&lt;V&gt;()
+			given V satisfies Object {
+		object nullVisitor satisfies VertexVisitor&lt;V&gt; {}
+		return nullVisitor;
+	}
+
+	&quot;Empty edge visitor doing nothing.&quot;
+	by (&quot;ThorstenSeitz&quot;)
+	shared EdgeVisitor&lt;V,E&gt; nullEdgeVisitor&lt;V,E&gt;()
+			given V satisfies Object
+			given E satisfies Edge&lt;V,E&gt; {
+		object nullVisitor satisfies EdgeVisitor&lt;V,E&gt; {}
+		return nullVisitor;
+	}
 }
 </pre></body></html>

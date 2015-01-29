@@ -8,10 +8,11 @@
 
 &quot;[[Weights]] gives a mapping from edges to weights and a zero element to make [[Weight]] a monoid.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface Weights&lt;Weight,E&gt;
-		satisfies Monoid&lt;Weight,Weights&lt;Weight,E&gt;&gt;
+shared interface Weights&lt;Weight,Vertex,E&gt;
+		satisfies Monoid&lt;Weight,Weights&lt;Weight,Vertex,E&gt;&gt;
 		given Weight satisfies Summable&lt;Weight&gt;
-		given E satisfies Edge&lt;Object,E&gt; {
+		given Vertex satisfies Object
+		given E satisfies Edge&lt;Vertex,E&gt; {
 
 	shared formal Weight weight(E edge);
 }
@@ -19,8 +20,8 @@ shared interface Weights&lt;Weight,E&gt;
 &quot;[[ImplicitEdgeWeights]] gives a mapping from vertex pairs to weights and a zero element
  to make [[Weight]] a monoid.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface ImplicitEdgeWeights&lt;Vertex,Weight&gt;
-		satisfies Monoid&lt;Weight,ImplicitEdgeWeights&lt;Vertex,Weight&gt;&gt;
+shared interface ImplicitEdgeWeights&lt;Weight,Vertex&gt;
+		satisfies Monoid&lt;Weight,ImplicitEdgeWeights&lt;Weight,Vertex&gt;&gt;
 		given Weight satisfies Summable&lt;Weight&gt; {
 
 	shared formal Weight weight(Vertex source, Vertex target);
@@ -28,8 +29,9 @@ shared interface ImplicitEdgeWeights&lt;Vertex,Weight&gt;
 
 &quot;Hops assigns an edge the weight of 1 and can therefore be used to count the number of edges, or &apos;hops&apos;.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared class Hops&lt;E&gt;() satisfies Weights&lt;Integer,E&gt;
-		given E satisfies Edge&lt;Object,E&gt; {
+shared class Hops&lt;V,E&gt;() satisfies Weights&lt;Integer,V,E&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt; {
 
 	shared actual Integer weight(E edge) =&gt; 1;
 	shared actual Integer zero = 0;

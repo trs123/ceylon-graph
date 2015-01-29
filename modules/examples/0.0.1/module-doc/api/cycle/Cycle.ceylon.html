@@ -24,27 +24,36 @@ import graph.traversal.propagator {
 }
 import graph.traversal.visitor {
 	GenericVertexVisitor=VertexVisitor,
-	genericNullVertexVisitor=nullVertexVisitor,
 	GenericEdgeVisitor=EdgeVisitor,
-	genericNullEdgeVisitor=nullEdgeVisitor
+	traversalVisitors
 }
 
 &quot;Simple directed graph forming a cycle of `n` vertices.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &amp; DirectedGraph&lt;Integer,Link&gt; {
+shared class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &amp; DirectedGraph&lt;Integer,Link&gt; {
 
 	&quot;Directed edge within a [[Cycle]].&quot;
 	shared final class Link(shared actual Integer source, shared actual Integer target)
 			satisfies DirectedEdge&lt;Integer,Link&gt; {
 
 		shared actual Link reversed =&gt; Link(target, source);
+
+		shared actual Boolean equals(Object other) {
+			if (is Link other) {
+				return other.source == source &amp;&amp; other.target == target;
+			} else {
+				return false;
+			}
+		}
+
+		shared actual Integer hash =&gt; source.hash.xor(target.hash);
 	}
 
-	shared actual Link? edgeConnecting(Integer source, Integer target) =&gt; target == (source + 1) % n then Link(source, target) else null;
+	shared actual default Link? edgeConnecting(Integer source, Integer target) =&gt; target == (source + 1) % n then Link(source, target) else null;
 
-	shared actual {Integer*} neighbors(Integer vertex) =&gt; { (vertex + 1) % n };
+	shared actual default {Integer*} neighbors(Integer vertex) =&gt; { (vertex + 1) % n };
 
-	shared actual {Integer*} vertices =&gt; 0 .. n - 1;
+	shared actual default {Integer*} vertices =&gt; 0 .. n - 1;
 
 	// Convenient type aliases eliminating generic parameters
 
@@ -60,8 +69,8 @@ shared final class Cycle(Integer n) satisfies SimpleGraph&lt;Integer,Link&gt; &a
 
 	shared interface VertexTraversal =&gt; GenericVertexTraversal&lt;Integer,Cycle&gt;;
 
-	shared VertexVisitor nullVertexVisitor = genericNullVertexVisitor&lt;Integer&gt;();
-	shared EdgeVisitor nullEdgeVisitor = genericNullEdgeVisitor&lt;Integer,Link&gt;();
+	shared VertexVisitor nullVertexVisitor = traversalVisitors.nullVertexVisitor&lt;Integer&gt;();
+	shared EdgeVisitor nullEdgeVisitor = traversalVisitors.nullEdgeVisitor&lt;Integer,Link&gt;();
 
 	// BFS traversal for Cycle
 

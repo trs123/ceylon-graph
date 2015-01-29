@@ -3,10 +3,10 @@
 <link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>&quot;A Walk is a possibly empty sequence of edges connecting two vertices.&quot;
-by(&quot;ThorstenSeitz&quot;)
+by (&quot;ThorstenSeitz&quot;)
 shared interface Walk&lt;V,E&gt; satisfies Comparable&lt;Walk&lt;V,E&gt;&gt;
 		given V satisfies Object
-		given E satisfies Edge&lt;V, E&gt; {
+		given E satisfies Edge&lt;V,E&gt; {
 
 	&quot;The edges comprising the walk.&quot;
 	shared formal {E*} edges;
@@ -14,7 +14,7 @@ shared interface Walk&lt;V,E&gt; satisfies Comparable&lt;Walk&lt;V,E&gt;&gt;
 	&quot;The vertices touched by the walk.&quot;
 	shared {V*} vertices {
 		if (exists startpoint = edges.first?.source) {
-			return edges.map(Edge&lt;V, E&gt;.target).follow(startpoint);
+			return edges.map(Edge&lt;V,E&gt;.target).follow(startpoint);
 		} else {
 			return {};
 		}
@@ -32,7 +32,8 @@ shared interface Walk&lt;V,E&gt; satisfies Comparable&lt;Walk&lt;V,E&gt;&gt;
 	}
 
 	&quot;The distance of a walk with recpect to the given [[Weights]].&quot;
-	shared Weight distance&lt;Weight&gt;(Weights&lt;Weight, E&gt; weights) given Weight satisfies Summable&lt;Weight&gt; {
+	shared Weight distance&lt;Weight&gt;(Weights&lt;Weight,V,E&gt; weights)
+			given Weight satisfies Summable&lt;Weight&gt; {
 		return edges.map(weights.weight).fold(weights.zero)(plus&lt;Weight&gt;);
 	}
 

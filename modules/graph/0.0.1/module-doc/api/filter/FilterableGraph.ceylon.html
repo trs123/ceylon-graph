@@ -1,19 +1,19 @@
 <!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
-<title>DirectedEdge.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<title>FilterableGraph.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
 <link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
-	Edge
+	AdjacencyGraph
 }
 
+&quot;An [[AdjacencyGraph]] which can be filtered.&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared interface DirectedEdge&lt;Vertex,E&gt; of E
-		satisfies Edge&lt;Vertex,E&gt;
-		given Vertex satisfies Object
-		given E satisfies Edge&lt;Vertex,E&gt; { // should be DirectedEdge&lt;Vertex,E&gt; but clashes with definition of Edge
+shared interface FilterableAdjacencyGraph&lt;V,G&gt; of G
+		satisfies AdjacencyGraph&lt;V&gt;
+		given V satisfies Object
+		given G satisfies AdjacencyGraph&lt;V&gt; {
 
-	shared actual Boolean isDirected =&gt; true;
-
-	shared actual Boolean isIncident(Vertex vertex) =&gt; source == vertex;
+	&quot;Filtered subgraph containing only the vertices for which the predicate answers true.&quot;
+	shared formal G filterVertices(Boolean predicate(V vertex));
 }
 </pre></body></html>

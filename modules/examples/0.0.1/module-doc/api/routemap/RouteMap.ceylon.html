@@ -77,13 +77,13 @@ shared final class RouteMap({City*} cities, {Route*} routes) satisfies Multigrap
 	shared actual {City*} vertices =&gt; cities;
 
 	&quot;An accessor for the [[distance|Route.distance]] of a route.&quot;
-	shared object distances satisfies Weights&lt;Distance,Route&gt; {
+	shared object distances satisfies Weights&lt;Distance,City,Route&gt; {
 		shared actual Distance weight(Route route) =&gt; route.distance;
 		shared actual Distance zero =&gt; km(0);
 	}
 
 	&quot;An accessor for the [[travel time|Route.travelTime]] of a route.&quot;
-	shared object travelTimes satisfies Weights&lt;Period,Route&gt; {
+	shared object travelTimes satisfies Weights&lt;Period,City,Route&gt; {
 		shared actual Period weight(Route route) =&gt; route.travelTime;
 		shared actual Period zero =&gt; zeroPeriod;
 	}
