@@ -23,10 +23,8 @@ shared class WalkTests() {
 	RouteMap routeMap = example.routeMap;
 
 	// helper to determine unique route between two cities.
-	Route autobahn(City from, City to) {
-		Route? route = routeMap
-			.edgesConnecting(from, to)
-			.find((Route route) => route.name.startsWith("A"));
+	Route route(String name, City from, City to) {
+		Route? route = routeMap.edgesConnecting(from, to).find((Route route) => route.name == name);
 		assert(is Route route);
 		return route;
 	}
@@ -37,8 +35,8 @@ shared class WalkTests() {
 		// define TravelRoute
 		class TravelRoute(shared actual [Route*] edges) satisfies Walk<City,Route> {}
 		// find legs for the travel route hamburg->berlin->leipzig
-		Route hamburgBerlin = autobahn(example.hamburg, example.berlin);
-		Route berlinLeipzig = autobahn(example.berlin, example.leipzig);
+		Route hamburgBerlin = route("A24", example.hamburg, example.berlin);
+		Route berlinLeipzig = route("A9", example.berlin, example.leipzig);
 		// create travel route (= a Walk)
 		TravelRoute travelRoute = TravelRoute([hamburgBerlin, berlinLeipzig]);
 		// check different distances along that Walk
