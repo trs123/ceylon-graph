@@ -12,6 +12,9 @@ import graph {
 	Walk,
 	Weights
 }
+import graph.impl {
+	AbstractIncidenceList
+}
 import graph.multigraph {
 	Multigraph
 }
@@ -28,7 +31,7 @@ shared Period period(Integer hours, Integer minutes) =&gt; Period(0, 0, 0, hours
 by (&quot;ThorstenSeitz&quot;)
 shared Distance km(Integer kilometers, Integer meters = 0) =&gt; Distance(kilometers * 1000 + meters);
 
-&quot;Distance measured in km.&quot;
+&quot;Distance measured in km (Value Object).&quot;
 by (&quot;ThorstenSeitz&quot;)
 shared final class Distance(shared Integer meters) satisfies Summable&lt;Distance&gt; &amp; Comparable&lt;Distance&gt; {
 	shared actual Distance plus(Distance other) =&gt; Distance(meters + other.meters);
@@ -36,8 +39,7 @@ shared final class Distance(shared Integer meters) satisfies Summable&lt;Distanc
 	shared actual Boolean equals(Object other) { // TODO: rewrite as if expression in next Ceylon version
 		if (is Distance other) {
 			return meters.equals(other.meters);
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -45,10 +47,19 @@ shared final class Distance(shared Integer meters) satisfies Summable&lt;Distanc
 	shared actual String string =&gt; &quot;``meters`` m&quot;;
 }
 
-&quot;A city.&quot;
+&quot;A city (Value Object).&quot;
 by (&quot;ThorstenSeitz&quot;)
 shared final class City(shared String name) satisfies Comparable&lt;City&gt; {
 	shared actual Comparison compare(City other) =&gt; name.compare(other.name);
+	shared actual Boolean equals(Object other) { // TODO: rewrite as if expression in next Ceylon version
+		if (is City other) {
+			return name.equals(other.name);
+		} else {
+			return false;
+		}
+	}
+	shared actual Integer hash =&gt; name.hash;
+	shared actual String string =&gt; name;
 }
 
 &quot;A route between two cities.&quot;
@@ -68,13 +79,9 @@ shared final class Route(
  The same cities may be connected by multiple routes (e.g. Autobahn or Bundesstraße) with different distances
  and travel times. The route map is therefore a [[Multigraph]].&quot;
 by (&quot;ThorstenSeitz&quot;)
-shared final class RouteMap({City*} cities, {Route*} routes) satisfies Multigraph&lt;City,Route&gt; &amp; IncidenceGraph&lt;City,Route&gt; &amp; UndirectedGraph&lt;City,Route&gt; {
-
-	&quot;All possible [[routes|Route]] between [[cities|City]].&quot;
-	shared actual {Route*} edges =&gt; routes;
-
-	&quot;All [[cities|City]].&quot;
-	shared actual {City*} vertices =&gt; cities;
+shared final class RouteMap({City*} cities, {Route*} routes)
+		extends AbstractIncidenceList&lt;City,Route,RouteMap&gt;(cities, routes)
+		satisfies Multigraph&lt;City,Route&gt; &amp; IncidenceGraph&lt;City,Route&gt; &amp; UndirectedGraph&lt;City,Route&gt; {
 
 	&quot;An accessor for the [[distance|Route.distance]] of a route.&quot;
 	shared object distances satisfies Weights&lt;Distance,City,Route&gt; {
@@ -90,6 +97,9 @@ shared final class RouteMap({City*} cities, {Route*} routes) satisfies Multigrap
 
 	&quot;Answer all routes between the given cities.&quot;
 	shared actual {Route*} edgesConnecting(City source, City target) =&gt; adjacentEdges(source).filter((Route route) =&gt; route.target == target);
+
+	&quot;Create RouteMap from vertices and edges (used by filter methods).&quot;
+	shared actual RouteMap create({City*} vertices, {Route*} edges) =&gt; RouteMap(vertices, edges);
 }
 
 &quot;This example combines a concrete [[RouteMap]] with a named list of the cities forming its vertices.&quot;

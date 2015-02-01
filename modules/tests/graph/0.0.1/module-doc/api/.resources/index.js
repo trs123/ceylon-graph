@@ -13,6 +13,7 @@ var index = [
 {'name': 'DistanceMapperTest.testDistancesInRouteMap', 'type': 'function', 'url': 'DistanceMapperTest.type.html#testDistancesInRouteMap', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'DistanceMapperTest', 'type': 'class', 'url': 'DistanceMapperTest.type.html', 'doc': '<p>Test <code><span title=\'graph.traversal.visitor::DistanceMapper\'><span class=\'type-identifier\'>DistanceMapper</span></span></code>.</p>\n', 'tags': [],'icons': ['icon-class']},
 {'name': 'FilterableGraphTest.filteredCycle', 'type': 'function', 'url': 'FilterableGraphTest.type.html#filteredCycle', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
+{'name': 'FilterableGraphTest.filteredRouteMap', 'type': 'function', 'url': 'FilterableGraphTest.type.html#filteredRouteMap', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'FilterableGraphTest', 'type': 'class', 'url': 'FilterableGraphTest.type.html', 'doc': '', 'tags': [],'icons': ['icon-class']},
 {'name': 'VertexPropagatorTests.shouldPropagateToNeighbors', 'type': 'function', 'url': 'VertexPropagatorTests.type.html#shouldPropagateToNeighbors', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'VertexPropagatorTests', 'type': 'class', 'url': 'VertexPropagatorTests.type.html', 'doc': '', 'tags': [],'icons': ['icon-class']},
@@ -20,6 +21,8 @@ var index = [
 {'name': 'EdgePropagatorTests.shouldOrientEdgesOutwards', 'type': 'function', 'url': 'EdgePropagatorTests.type.html#shouldOrientEdgesOutwards', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'EdgePropagatorTests.shouldOrientEdgesOutwards2', 'type': 'function', 'url': 'EdgePropagatorTests.type.html#shouldOrientEdgesOutwards2', 'doc': '', 'tags': [],'icons': ['icon-shared-member']},
 {'name': 'EdgePropagatorTests', 'type': 'class', 'url': 'EdgePropagatorTests.type.html', 'doc': '', 'tags': [],'icons': ['icon-class']},
+{'name': 'WalkTests.walkDistances', 'type': 'function', 'url': 'WalkTests.type.html#walkDistances', 'doc': '<p>Test <code>distance</code> with different <span title=\'graph::Weights\'>weights</span>.</p>\n', 'tags': [],'icons': ['icon-shared-member']},
+{'name': 'WalkTests', 'type': 'class', 'url': 'WalkTests.type.html', 'doc': '<p>Test <code><span title=\'graph::Walk\'><span class=\'type-identifier\'>Walk</span></span></code> using <code><span title=\'examples.routemap::RouteMap\'><span class=\'type-identifier\'>RouteMap</span></span></code> <code>example</code>.</p>\n', 'tags': [],'icons': ['icon-class']},
 {'name': 'tests.graph', 'type': 'module', 'url': 'index.html', 'doc': '', 'tags': [],'icons': []}];
 var tagIndex = [
 ];

@@ -43,5 +43,7 @@ shared interface Edge&lt;Vertex,E&gt; of DirectedEdge&lt;Vertex,E&gt; | Undirect
 	shared formal E reversed;
 
 	shared formal Boolean isIncident(Vertex vertex);
+
+	shared Boolean isEndpoint(Vertex vertex) =&gt; source == vertex || target == vertex;
 }
 </pre></body></html>

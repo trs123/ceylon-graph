@@ -18,7 +18,5 @@ shared interface UndirectedGraph&lt;V,E&gt; satisfies IncidenceGraph&lt;V,E&gt;
 	shared default {E*} incomingEdgesOf(V vertex) {
 		return adjacentEdges(vertex).filter((E edge) =&gt; edge.target == vertex);
 	}
-
-	shared actual default {E*} edges =&gt; vertices.flatMap(outgoingEdgesOf);
 }
 </pre></body></html>

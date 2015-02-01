@@ -1,0 +1,43 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>AdjacencyList.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	AdjacencyGraph
+}
+import graph.filter {
+	FilterableAdjacencyGraph
+}
+
+&quot;Alias for adjacency map.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared alias Adjacencies&lt;V&gt;
+		given V satisfies Object =&gt; Map&lt;V,{V*}&gt;;
+
+&quot;An `AdjacencyList` is an [[AdjacencyGraph]] defined by a Map from vertices to their neighbors.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared abstract class AbstractAdjacencyList&lt;V,G&gt;(Adjacencies&lt;V&gt; adjacencies) of G
+		satisfies AdjacencyGraph&lt;V&gt; &amp; FilterableAdjacencyGraph&lt;V,G&gt;
+		given V satisfies Object
+		given G satisfies AbstractAdjacencyList&lt;V,G&gt; {
+
+	shared actual {V*} neighbors(V vertex) =&gt; adjacencies.get(vertex) else [];
+
+	shared actual {V*} vertices =&gt; adjacencies.keys;
+
+	shared actual G filterVertices(Boolean predicate(V vertex))
+			=&gt; create(adjacencies.filterKeys(predicate).mapItems((v, ns) =&gt; ns.filter(predicate)));
+
+	&quot;Create new [[AbstractAdjacencyList]] from adjacencies.&quot;
+	shared formal G create(Adjacencies&lt;V&gt; adjacencies);
+}
+
+&quot;A concrete [[AbstractAdjacencyList]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class AdjacencyList&lt;V&gt;(Adjacencies&lt;V&gt; adjacencies)
+		extends AbstractAdjacencyList&lt;V,AdjacencyList&lt;V&gt;&gt;(adjacencies)
+		given V satisfies Object {
+
+	shared actual AdjacencyList&lt;V&gt; create(Adjacencies&lt;V&gt; adjacencies) =&gt; AdjacencyList&lt;V&gt;(adjacencies);
+}
+</pre></body></html>

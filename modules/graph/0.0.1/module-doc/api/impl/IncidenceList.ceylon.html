@@ -1,0 +1,45 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>IncidenceList.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	Edge,
+	IncidenceGraph
+}
+import graph.filter {
+	FilterableIncidenceGraph
+}
+
+&quot;An `AbstractIncidenceList` is an [[IncidenceGraph]] defined by a list of vertices and a list of edges.&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared abstract class AbstractIncidenceList&lt;V,E,G&gt;(
+	shared actual {V*} vertices,
+	shared actual {E*} edges)
+		of G
+		satisfies IncidenceGraph&lt;V,E&gt; &amp; FilterableIncidenceGraph&lt;V,E,G&gt;
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt;
+		given G satisfies AbstractIncidenceList&lt;V,E,G&gt; {
+
+	shared actual G filterEdges(Boolean predicate(E edge)) =&gt; create(
+		vertices,
+		edges.filter(predicate));
+
+	shared actual G filterVertices(Boolean predicate(V vertex)) =&gt; create(
+		vertices.filter(predicate),
+		edges.filter((E edge) =&gt; predicate(edge.source) &amp;&amp; predicate(edge.target)));
+
+	&quot;Create new [[AbstractAdjacencyList]] from adjacencies.&quot;
+	shared formal G create({V*} vertices, {E*} edges);
+}
+
+&quot;A concrete [[AbstractIncidenceList]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class IncidenceList&lt;V,E&gt;({V*} vertices, {E*} edges)
+		extends AbstractIncidenceList&lt;V,E,IncidenceList&lt;V,E&gt;&gt;(vertices, edges)
+		given V satisfies Object
+		given E satisfies Edge&lt;V,E&gt; {
+
+	shared actual IncidenceList&lt;V,E&gt; create({V*} vertices, {E*} edges) =&gt; IncidenceList&lt;V,E&gt;(vertices, edges);
+}
+</pre></body></html>

@@ -4,11 +4,17 @@
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.test {
 	test,
-	assertEquals
+	assertEquals,
+	assertTrue
 }
 
 import examples.cycle {
 	Cycle
+}
+import examples.routemap {
+	example,
+	RouteMap,
+	Route
 }
 
 import graph.filter {
@@ -53,6 +59,23 @@ shared class FilterableGraphTest() {
 		assertEquals(filteredCycle.edgeConnecting(9,0), null);
 		assertEquals(filteredCycle.edgeConnecting(0,1), filteredCycle.Link(0,1));
 		assertEquals(filteredCycle.edgeConnecting(4,5), null);
+	}
+
+	test
+	shared void filteredRouteMap() {
+		RouteMap routeMap = example.routeMap;
+		// filter
+		RouteMap aroundBerlin = routeMap
+				.filterEdges((Route edge) =&gt; edge.isEndpoint(example.berlin))
+				.dropUnconnectedVertices();
+		// check vertices
+		assertEquals(
+			aroundBerlin.vertices.sequence(),
+			[example.berlin, example.hamburg, example.hannover, example.leipzig]);
+		// check edges
+		for (Route route in aroundBerlin.edges) {
+			assertTrue(route.isEndpoint(example.berlin));
+		}
 	}
 }
 </pre></body></html>

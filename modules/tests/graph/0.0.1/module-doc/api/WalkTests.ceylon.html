@@ -1,0 +1,53 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>WalkTests.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import ceylon.test {
+	test,
+	assertEquals
+}
+
+import examples.routemap {
+	example,
+	RouteMap,
+	City,
+	Route,
+	period,
+	km
+}
+
+import graph {
+	Walk
+}
+
+&quot;Test [[Walk]] using [[RouteMap]] [[example]].&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared class WalkTests() {
+
+	RouteMap routeMap = example.routeMap;
+
+	// helper to determine unique route between two cities.
+	Route autobahn(City from, City to) {
+		Route? route = routeMap
+			.edgesConnecting(from, to)
+			.find((Route route) =&gt; route.name.startsWith(&quot;A&quot;));
+		assert(is Route route);
+		return route;
+	}
+
+	&quot;Test [[Walk.distance]] with different [[weights|graph::Weights]].&quot;
+	test
+	shared void walkDistances() {
+		// define TravelRoute
+		class TravelRoute(shared actual [Route*] edges) satisfies Walk&lt;City,Route&gt; {}
+		// find legs for the travel route hamburg-&gt;berlin-&gt;leipzig
+		Route hamburgBerlin = autobahn(example.hamburg, example.berlin);
+		Route berlinLeipzig = autobahn(example.berlin, example.leipzig);
+		// create travel route (= a Walk)
+		TravelRoute travelRoute = TravelRoute([hamburgBerlin, berlinLeipzig]);
+		// check different distances along that Walk
+		assertEquals(travelRoute.distance(routeMap.distances), km(288+190));
+		assertEquals(travelRoute.distance(routeMap.travelTimes), period(2, 54) + period(2, 11));
+	}
+}
+</pre></body></html>
