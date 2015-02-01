@@ -1,10 +1,16 @@
 import ceylon.test {
 	test,
-	assertEquals
+	assertEquals,
+	assertTrue
 }
 
 import examples.cycle {
 	Cycle
+}
+import examples.routemap {
+	example,
+	RouteMap,
+	Route
 }
 
 import graph.filter {
@@ -49,5 +55,22 @@ shared class FilterableGraphTest() {
 		assertEquals(filteredCycle.edgeConnecting(9,0), null);
 		assertEquals(filteredCycle.edgeConnecting(0,1), filteredCycle.Link(0,1));
 		assertEquals(filteredCycle.edgeConnecting(4,5), null);
+	}
+
+	test
+	shared void filteredRouteMap() {
+		RouteMap routeMap = example.routeMap;
+		// filter
+		RouteMap aroundBerlin = routeMap
+				.filterEdges((Route edge) => edge.isEndpoint(example.berlin))
+				.dropUnconnectedVertices();
+		// check vertices
+		assertEquals(
+			aroundBerlin.vertices.sequence(),
+			[example.berlin, example.hamburg, example.hannover, example.leipzig]);
+		// check edges
+		for (Route route in aroundBerlin.edges) {
+			assertTrue(route.isEndpoint(example.berlin));
+		}
 	}
 }
