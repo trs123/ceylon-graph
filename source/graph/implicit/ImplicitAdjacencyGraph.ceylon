@@ -21,7 +21,7 @@ shared class ImplicitAdjacencyGraph<V>(
 	// Aliases without type parameters
 	shared interface VertexTraversal => GenericVertexTraversal<V,ImplicitAdjacencyGraph<V>>;
 	shared interface VertexVisitor => GenericVertexVisitor<V>;
-	shared VertexVisitor nullVertexVisitor = traversalVisitors.nullVertexVisitor<V>();
+	shared VertexVisitor nullVertexVisitor => traversalVisitors.nullVertexVisitor<V>();
 
 	"Breadth first traversal of the receiver."
 	shared VertexTraversal bfsTraversal(

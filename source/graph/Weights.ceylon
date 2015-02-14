@@ -23,7 +23,8 @@ shared interface ImplicitEdgeWeights<Weight,Vertex>
 	shared formal Weight weight(Vertex source, Vertex target);
 }
 
-"Hops assigns an edge the weight of 1 and can therefore be used to count the number of edges, or 'hops'."
+"Hops assigns an edge the weight of 1 and can therefore be used to count the number of edges, or 'hops'
+ between two vertices."
 by ("ThorstenSeitz")
 shared class Hops<V,E>() satisfies Weights<Integer,V,E>
 		given V satisfies Object
