@@ -55,6 +55,9 @@ shared interface AdjacencyGraph&lt;V&gt;
 		return !neighbors(vertex).empty;
 	}
 
+	&quot;Answer whether the graph contains a given vertex.&quot;
+	shared default Boolean containsVertex(V vertex) =&gt; vertices.contains(vertex);
+
 	&quot;Answer whether the graph contains an edge from source to target.&quot;
 	shared default Boolean containsEdge(V source, V target) {
 		return neighbors(source).any((V neighbor) =&gt; neighbor == target);

@@ -1,0 +1,39 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>ImplicitAdjacencyGraph.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
+<link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	AdjacencyGraph
+}
+import graph.traversal {
+	GenericVertexTraversal=VertexTraversal,
+	BfsTraversal
+}
+import graph.traversal.visitor {
+	GenericVertexVisitor=VertexVisitor,
+	traversalVisitors
+}
+
+&quot;Implementation of an implicit adjacency graph.&quot;
+by (&quot;ThorstenSeitz)&quot;)
+shared class ImplicitAdjacencyGraph&lt;V&gt;(
+	V root,
+	shared actual default {V*} neighbors(V vertex))
+		satisfies AdjacencyGraph&lt;V&gt;
+		given V satisfies Object {
+
+	// Aliases without type parameters
+	shared interface VertexTraversal =&gt; GenericVertexTraversal&lt;V,ImplicitAdjacencyGraph&lt;V&gt;&gt;;
+	shared interface VertexVisitor =&gt; GenericVertexVisitor&lt;V&gt;;
+	shared VertexVisitor nullVertexVisitor = traversalVisitors.nullVertexVisitor&lt;V&gt;();
+
+	&quot;Breadth first traversal of the receiver.&quot;
+	shared VertexTraversal bfsTraversal(
+		V start,
+		VertexVisitor visitor = nullVertexVisitor) =&gt; BfsTraversal(this, start, visitor);
+
+	// Default implementation for accessing all vertices by using a breadth first traversal starting
+	// from the root vertex.
+	shared actual default {V*} vertices =&gt; bfsTraversal(root);
+}
+</pre></body></html>
