@@ -1,7 +1,8 @@
 import ceylon.test {
 	test,
 	assertEquals,
-	assertTrue
+	assertTrue,
+	assertFalse
 }
 
 import examples.cycle {
@@ -10,11 +11,16 @@ import examples.cycle {
 import examples.routemap {
 	example,
 	RouteMap,
-	Route
+	Route,
+	City
 }
 
 import graph.filter {
 	FilterableAdjacencyGraph
+}
+import graph.traversal.visitor {
+	mapHops,
+	HopDistanceMap
 }
 
 by ("ThorstenSeitz")
@@ -30,13 +36,6 @@ shared class FilterableGraphTest() {
 				object filteredGraph extends FCycle(outer.n) {
 					shared actual {Integer*} vertices => outer.vertices.filter(predicate);
 					shared actual {Integer*} neighbors(Integer vertex) => outer.neighbors(vertex).filter(predicate);
-					shared actual Link? edgeConnecting(Integer source, Integer target) {
-						if (predicate(source) && predicate(target)) {
-							return outer.edgeConnecting(source, target);
-						} else {
-							return null;
-						}
-					}
 				}
 				return filteredGraph;
 			}
@@ -51,14 +50,10 @@ shared class FilterableGraphTest() {
 		assertEquals(filteredCycle.neighbors(2).sequence(), [3]);
 		assertEquals(filteredCycle.neighbors(3).sequence(), [4]);
 		assertEquals(filteredCycle.neighbors(4).sequence(), []);
-		// check edges
-		assertEquals(filteredCycle.edgeConnecting(9,0), null);
-		assertEquals(filteredCycle.edgeConnecting(0,1), filteredCycle.Link(0,1));
-		assertEquals(filteredCycle.edgeConnecting(4,5), null);
 	}
 
 	test
-	shared void filteredRouteMap() {
+	shared void edgeFilteredRouteMap() {
 		RouteMap routeMap = example.routeMap;
 		// filter
 		RouteMap aroundBerlin = routeMap
@@ -68,9 +63,25 @@ shared class FilterableGraphTest() {
 		assertEquals(
 			aroundBerlin.vertices.sequence(),
 			[example.berlin, example.hamburg, example.hannover, example.leipzig]);
+		assertFalse(aroundBerlin.containsVertex(example.kassel));
+		assertFalse(aroundBerlin.containsVertex(example.wuerzburg));
 		// check edges
 		for (Route route in aroundBerlin.edges) {
 			assertTrue(route.isEndpoint(example.berlin));
 		}
+	}
+
+	test
+	shared void vertexFilteredRouteMap() {
+		RouteMap routeMap = example.routeMap;
+		HopDistanceMap<City> distanceMap = mapHops(routeMap, example.hamburg);
+		// filter
+		RouteMap twoHopsFromHamburg = routeMap
+				.filterVertices((City city) => distanceMap.get(city)?.notLargerThan(2) else false);
+		// check vertices
+		assertEquals(
+			twoHopsFromHamburg.vertices.sequence(),
+			[example.berlin, example.hamburg, example.hannover, example.kassel, example.leipzig]);
+		assertFalse(twoHopsFromHamburg.containsVertex(example.wuerzburg));
 	}
 }

@@ -105,8 +105,9 @@ shared object example {
 	shared City berlin = City("Berlin");
 	shared City hannover = City("Hannover");
 	shared City kassel = City("Kassel");
+	shared City wuerzburg = City("Würzburg");
 	shared RouteMap routeMap = RouteMap(
-		{ berlin, hamburg, hannover, kassel, leipzig },
+		{ berlin, hamburg, hannover, kassel, leipzig, wuerzburg },
 		{
 			Route("A7", hamburg, hannover, km(151), period(1, 38)),
 			Route("B3", hamburg, hannover, km(159), period(3, 15)),
@@ -120,7 +121,8 @@ shared object example {
 			Route("A4", leipzig, kassel, km(287), period(3, 23)),
 			Route("B249", leipzig, kassel, km(258), period(4, 34)),
 			Route("A7", hannover, kassel, km(167), period(1, 54)),
-			Route("B3", hannover, kassel, km(156), period(2, 44))
+			Route("B3", hannover, kassel, km(156), period(2, 44)),
+			Route("A7", wuerzburg, kassel, km(210), period(1, 56))
 		});
 }
 

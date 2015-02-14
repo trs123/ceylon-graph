@@ -51,6 +51,9 @@ shared interface AdjacencyGraph<V>
 		return !neighbors(vertex).empty;
 	}
 
+	"Answer whether the graph contains a given vertex."
+	shared default Boolean containsVertex(V vertex) => vertices.contains(vertex);
+
 	"Answer whether the graph contains an edge from source to target."
 	shared default Boolean containsEdge(V source, V target) {
 		return neighbors(source).any((V neighbor) => neighbor == target);
