@@ -8,7 +8,7 @@ import graph {
 	Walk,
 	Weights
 }
-import graph.impl {
+import graph.explicit {
 	AbstractIncidenceList
 }
 import graph.multigraph {

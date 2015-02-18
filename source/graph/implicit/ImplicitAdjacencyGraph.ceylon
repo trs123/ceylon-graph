@@ -10,7 +10,7 @@ import graph.traversal.visitor {
 	traversalVisitors
 }
 
-"Implementation of an implicit adjacency graph."
+"Implementation of an implicit adjacency graph defined by a root vertex and a neighbors function."
 by ("ThorstenSeitz)")
 shared class ImplicitAdjacencyGraph<V>(
 	V root,
