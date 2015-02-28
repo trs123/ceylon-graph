@@ -3,7 +3,8 @@
 <link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
-	AdjacencyGraph
+	AdjacencyGraph,
+	VertexList
 }
 import graph.filter {
 	FilterableAdjacencyGraph
@@ -17,13 +18,17 @@ shared alias Adjacencies&lt;V&gt;
 &quot;An `AdjacencyList` is an [[AdjacencyGraph]] defined by a Map from vertices to their neighbors.&quot;
 by (&quot;ThorstenSeitz&quot;)
 shared abstract class AbstractAdjacencyList&lt;V,G&gt;(Adjacencies&lt;V&gt; adjacencies) of G
-		satisfies AdjacencyGraph&lt;V&gt; &amp; FilterableAdjacencyGraph&lt;V,G&gt;
+		satisfies AdjacencyGraph&lt;V&gt; &amp; FilterableAdjacencyGraph&lt;V,G&gt; &amp; VertexList&lt;V&gt;
 		given V satisfies Object
 		given G satisfies AbstractAdjacencyList&lt;V,G&gt; {
 
 	shared actual {V*} neighbors(V vertex) =&gt; adjacencies.get(vertex) else [];
 
 	shared actual {V*} vertices =&gt; adjacencies.keys;
+
+	shared actual default Boolean containsVertex(V vertex) =&gt; vertices.contains(vertex);
+
+	shared actual Boolean empty =&gt; vertices.empty;
 
 	shared actual G filterVertices(Boolean predicate(V vertex))
 			=&gt; create(adjacencies.filterKeys(predicate).mapItems((v, ns) =&gt; ns.filter(predicate)));

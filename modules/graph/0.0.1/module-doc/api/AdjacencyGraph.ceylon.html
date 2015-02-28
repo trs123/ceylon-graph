@@ -10,7 +10,6 @@
 
  ## Complexity
 
- - [[vertices]] is required to be constant time; iterating over the iterable is required to be linear in the number of vertices
  - [[neighbors]] is required to be constant time; iterating over the iterable is required to be linear in the number of neighbors
  - [[degreeOf]] is required to be at most linear in the number of neighbors
  - [[containsEdge]] is required to be at most linear in the number of neighbors
@@ -28,9 +27,6 @@
 by (&quot;ThorstenSeitz&quot;)
 shared interface AdjacencyGraph&lt;V&gt;
 		given V satisfies Object {
-
-	&quot;All vertices of the graph.&quot;
-	shared formal {V*} vertices;
 
 	&quot;All neighbor vertices of the given vertex. A neighbor is the target of an outgoing directed edge
 	          or the other endpoint of an undirected edge.&quot;
@@ -55,22 +51,15 @@ shared interface AdjacencyGraph&lt;V&gt;
 		return !neighbors(vertex).empty;
 	}
 
-	&quot;Answer whether the graph contains a given vertex.&quot;
-	shared default Boolean containsVertex(V vertex) =&gt; vertices.contains(vertex);
-
 	&quot;Answer whether the graph contains an edge from source to target.&quot;
 	shared default Boolean containsEdge(V source, V target) {
 		return neighbors(source).any((V neighbor) =&gt; neighbor == target);
 	}
 
 	&quot;Answer whether the graph is empty, i.e. contains no vertices.&quot;
-	shared Boolean empty {
-		return vertices.empty;
-	}
+	shared formal Boolean empty;
 
 	&quot;Answer whether the graph is not empty, i.e. contains at least one vertex.&quot;
-	shared Boolean notEmpty {
-		return !empty;
-	}
+	shared default Boolean notEmpty =&gt; !empty;
 }
 </pre></body></html>

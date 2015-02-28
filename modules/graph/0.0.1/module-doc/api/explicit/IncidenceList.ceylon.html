@@ -4,7 +4,8 @@
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
 <script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
 	Edge,
-	IncidenceGraph
+	IncidenceGraph,
+	VertexList
 }
 import graph.filter {
 	FilterableIncidenceGraph
@@ -16,7 +17,7 @@ shared abstract class AbstractIncidenceList&lt;V,E,G&gt;(
 	shared actual {V*} vertices,
 	shared actual {E*} edges)
 		of G
-		satisfies IncidenceGraph&lt;V,E&gt; &amp; FilterableIncidenceGraph&lt;V,E,G&gt;
+		satisfies IncidenceGraph&lt;V,E&gt; &amp; FilterableIncidenceGraph&lt;V,E,G&gt; &amp; VertexList&lt;V&gt;
 		given V satisfies Object
 		given E satisfies Edge&lt;V,E&gt;
 		given G satisfies AbstractIncidenceList&lt;V,E,G&gt; {

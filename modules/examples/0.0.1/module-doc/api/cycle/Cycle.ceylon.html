@@ -2,16 +2,27 @@
 <title>Cycle.ceylon</title><link href='../.resources/favicon.ico' rel='shortcut icon'/>
 <link href='../.resources/ceylon.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
-<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph.implicit {
+<script type='text/javascript'>var resourceBaseUrl = '../.resources/'</script><script src='../.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='../.resources/rainbow.min.js' type='text/javascript'></script><script src='../.resources/ceylon.js' type='text/javascript'></script><script src='../.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>import graph {
+	VertexList
+}
+import graph.implicit {
 	ImplicitAdjacencyGraph
 }
 
-&quot;Simple directed graph forming a cycle of `n` vertices numbered from 0 to n-1.&quot;
+&quot;Simple directed graph forming a cycle of `n` vertices numbered from 0 to n-1.
+ REQUIRE: n &gt; 0&quot;
 by (&quot;ThorstenSeitz&quot;)
 shared class Cycle(Integer n) extends ImplicitAdjacencyGraph&lt;Integer&gt;(
 	0,
 	(Integer vertex) =&gt; { (vertex + 1) % n }
-) {
+)
+		satisfies VertexList&lt;Integer&gt; {
+
+	assert(n &gt; 0);
+
+	shared actual Boolean empty =&gt; false;
+
 	shared actual default {Integer*} vertices =&gt; 0 .. n - 1;
+
 }
 </pre></body></html>

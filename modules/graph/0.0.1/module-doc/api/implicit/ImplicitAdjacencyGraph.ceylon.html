@@ -15,7 +15,7 @@ import graph.traversal.visitor {
 }
 
 &quot;Implementation of an implicit adjacency graph defined by a root vertex and a neighbors function.&quot;
-by (&quot;ThorstenSeitz)&quot;)
+by (&quot;ThorstenSeitz&quot;)
 shared class ImplicitAdjacencyGraph&lt;V&gt;(
 	V root,
 	shared actual default {V*} neighbors(V vertex))
@@ -25,15 +25,13 @@ shared class ImplicitAdjacencyGraph&lt;V&gt;(
 	// Aliases without type parameters
 	shared interface VertexTraversal =&gt; GenericVertexTraversal&lt;V,ImplicitAdjacencyGraph&lt;V&gt;&gt;;
 	shared interface VertexVisitor =&gt; GenericVertexVisitor&lt;V&gt;;
-	shared VertexVisitor nullVertexVisitor =&gt; traversalVisitors.nullVertexVisitor&lt;V&gt;();
+
+	shared actual default Boolean empty =&gt; false;
 
 	&quot;Breadth first traversal of the receiver.&quot;
 	shared VertexTraversal bfsTraversal(
 		V start,
-		VertexVisitor visitor = nullVertexVisitor) =&gt; BfsTraversal(this, start, visitor);
+		VertexVisitor visitor = traversalVisitors.nullVertexVisitor&lt;V&gt;()) =&gt; BfsTraversal(this, start, visitor);
 
-	// Default implementation for accessing all vertices by using a breadth first traversal starting
-	// from the root vertex.
-	shared actual default {V*} vertices =&gt; bfsTraversal(root);
 }
 </pre></body></html>

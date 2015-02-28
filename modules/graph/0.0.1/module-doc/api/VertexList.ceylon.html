@@ -1,0 +1,25 @@
+<!DOCTYPE html><html xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='UTF-8'/>
+<title>VertexList.ceylon</title><link href='.resources/favicon.ico' rel='shortcut icon'/>
+<link href='.resources/ceylon.css' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'/>
+<script type='text/javascript'>var resourceBaseUrl = '.resources/'</script><script src='.resources/jquery-1.8.2.min.js' type='text/javascript'></script><script src='.resources/rainbow.min.js' type='text/javascript'></script><script src='.resources/ceylon.js' type='text/javascript'></script><script src='.resources/ceylondoc.js' type='text/javascript'></script></head><body><pre data-language='ceylon' style='font-family: Inconsolata, Monaco, Courier, monospace'>&quot;A Graph with efficient access to all vertices.
+
+ ## Complexity
+
+ - [[vertices]] is required to be constant time; iterating over the iterable is required to be linear in the number of vertices
+&quot;
+by (&quot;ThorstenSeitz&quot;)
+shared interface VertexList&lt;V&gt;
+		satisfies AdjacencyGraph&lt;V&gt;
+		given V satisfies Object {
+
+	&quot;Answer whether the graph contains a given vertex.&quot;
+	shared default Boolean containsVertex(V vertex) =&gt; vertices.contains(vertex);
+
+	&quot;Answer whether the graph is empty, i.e. contains no vertices.&quot;
+	shared actual default Boolean empty =&gt; vertices.empty;
+
+	&quot;All vertices of the graph.&quot;
+	shared formal {V*} vertices;
+}
+</pre></body></html>
