@@ -1,6 +1,7 @@
 import graph {
 	Edge,
-	IncidenceGraph
+	IncidenceGraph,
+	VertexList
 }
 import graph.filter {
 	FilterableIncidenceGraph
@@ -12,7 +13,7 @@ shared abstract class AbstractIncidenceList<V,E,G>(
 	shared actual {V*} vertices,
 	shared actual {E*} edges)
 		of G
-		satisfies IncidenceGraph<V,E> & FilterableIncidenceGraph<V,E,G>
+		satisfies IncidenceGraph<V,E> & FilterableIncidenceGraph<V,E,G> & VertexList<V>
 		given V satisfies Object
 		given E satisfies Edge<V,E>
 		given G satisfies AbstractIncidenceList<V,E,G> {

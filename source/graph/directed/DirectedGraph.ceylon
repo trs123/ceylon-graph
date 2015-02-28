@@ -14,6 +14,4 @@ shared interface DirectedGraph<V,E> satisfies IncidenceGraph<V,E>
 	shared default {E*} incomingEdgesOf(V vertex) {
 		return adjacentEdges(vertex).filter((E edge) => edge.target == vertex);
 	}
-
-	shared actual default {E*} edges => vertices.flatMap(outgoingEdgesOf);
 }

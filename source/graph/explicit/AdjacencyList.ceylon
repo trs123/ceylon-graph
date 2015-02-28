@@ -1,5 +1,6 @@
 import graph {
-	AdjacencyGraph
+	AdjacencyGraph,
+	VertexList
 }
 import graph.filter {
 	FilterableAdjacencyGraph
@@ -13,13 +14,17 @@ shared alias Adjacencies<V>
 "An `AdjacencyList` is an [[AdjacencyGraph]] defined by a Map from vertices to their neighbors."
 by ("ThorstenSeitz")
 shared abstract class AbstractAdjacencyList<V,G>(Adjacencies<V> adjacencies) of G
-		satisfies AdjacencyGraph<V> & FilterableAdjacencyGraph<V,G>
+		satisfies AdjacencyGraph<V> & FilterableAdjacencyGraph<V,G> & VertexList<V>
 		given V satisfies Object
 		given G satisfies AbstractAdjacencyList<V,G> {
 
 	shared actual {V*} neighbors(V vertex) => adjacencies.get(vertex) else [];
 
 	shared actual {V*} vertices => adjacencies.keys;
+
+	shared actual default Boolean containsVertex(V vertex) => vertices.contains(vertex);
+
+	shared actual Boolean empty => vertices.empty;
 
 	shared actual G filterVertices(Boolean predicate(V vertex))
 			=> create(adjacencies.filterKeys(predicate).mapItems((v, ns) => ns.filter(predicate)));
